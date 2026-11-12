@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   COLORS — change here to re-color the whole site
+   :root            = DARK mode (default)
+   [data-theme=light] = LIGHT mode
+   ===================================================================== */
+:root {
+  --bg: #050c08; /* page background */
+  --fg: #faf7f0; /* main text (ivory) */
+  --muted: #8fa89b; /* secondary text */
+  --neon: #3ddc97; /* main accent (glowing green) */
+  --glow: 61 220 151; /* same green as R G B, used for glows */
+  --coral: #ff7a66; /* second accent */
+  --coral-deep: #e85f4a;
+  --forest: #1f4d3a;
+  --edge: rgba(250, 247, 240, 0.1); /* borders */
+  --sunken: rgba(0, 0, 0, 0.3); /* inputs, inner boxes */
+  --panel-1: rgba(250, 247, 240, 0.05); /* glass card top */
+  --panel-2: rgba(250, 247, 240, 0.015); /* glass card bottom */
+  --glow-strength: 1;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #faf7f0; /* ivory */
+  --fg: #18241e; /* ink */
+  --muted: #5b6b62;
+  --neon: #1f4d3a; /* forest green */
+  --glow: 31 77 58;
+  --coral: #e85f4a; /* a bit deeper so text stays readable on ivory */
+  --coral-deep: #c94a36;
+  --edge: rgba(24, 36, 30, 0.14);
+  --sunken: rgba(31, 77, 58, 0.05);
+  --panel-1: rgba(255, 255, 255, 0.85);
+  --panel-2: rgba(255, 255, 255, 0.6);
+  --glow-strength: 0.8;
+  color-scheme: light;
+}
+
+/* light mode: faint blueprint grid + soft green haze behind everything (same colors, just layered) */
+[data-theme="light"] body {
+  background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgb(var(--glow) / 0.08), transparent 70%),
+    linear-gradient(rgb(var(--glow) / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--glow) / 0.045) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  background-attachment: fixed;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-neon: var(--neon);
+  --color-coral: var(--coral);
+  --color-coral-deep: var(--coral-deep);
+  --color-forest: var(--forest);
+  --color-edge: var(--edge);
+  --color-sunken: var(--sunken);
+  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color 0.4s, color 0.4s;
+}
+
+::selection {
+  background: var(--coral);
+  color: #fff;
+}
+
+/* ---------- glass panel ---------- */
+.glass {
+  background: linear-gradient(180deg, var(--panel-1), var(--panel-2));
+  border: 1px solid var(--edge);
+  backdrop-filter: blur(10px);
+}
+[data-theme="light"] .glass {
+  border-color: rgb(var(--glow) / 0.22);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px rgb(var(--glow) / 0.05),
+    0 10px 40px -18px rgb(var(--glow) / 0.35);
+}
+.glass-hover {
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.glass-hover:hover {
+  border-color: rgb(var(--glow) / 0.5);
+  box-shadow: 0 0 0 1px rgb(var(--glow) / 0.15), 0 0 40px -10px rgb(var(--glow) / calc(0.45 * var(--glow-strength) + 0.1));
+  transform: translateY(-3px);
+}
+[data-theme="light"] .glass-hover:hover {
+  border-color: rgb(var(--glow) / 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px rgb(var(--glow) / 0.2),
+    0 0 36px -8px rgb(var(--glow) / 0.45), 0 18px 40px -20px rgb(var(--glow) / 0.5);
+}
+
+.glow-text {
+  text-shadow: 0 0 24px rgb(var(--glow) / calc(0.45 * var(--glow-strength)));
+}
+.glow-coral {
+  box-shadow: 0 0 30px -6px rgba(255, 122, 102, calc(0.7 * var(--glow-strength)));
+}
+.glow-neon {
+  box-shadow: 0 0 24px -4px rgb(var(--glow) / calc(0.8 * var(--glow-strength)));
+}
+
+/* decision diamond pulse */
+.pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  50% {
+    box-shadow: 0 0 36px -2px rgb(var(--glow) / calc(0.9 * var(--glow-strength)));
+  }
+}
+
+/* ---------- moving perspective grid (hero floor) ---------- */
+.grid-floor {
+  position: absolute;
+  inset: auto -50% 0 -50%;
+  height: 60%;
+  background-image: linear-gradient(rgb(var(--glow) / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--glow) / 0.35) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(500px) rotateX(62deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, black 10%, transparent 85%);
+  animation: floor 3s linear infinite;
+}
+[data-theme="light"] .grid-floor {
+  opacity: 0.75;
+}
+@keyframes floor {
+  to {
+    background-position: 0 60px;
+  }
+}
+
+/* faint dot grid for the rest of the page */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--edge) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ---------- photo scan line ---------- */
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(to bottom, transparent, rgb(var(--glow) / 0.18), transparent);
+  animation: scan 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes scan {
+  0% {
+    top: -30%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* animated dashed connector */
+.flow-dash {
+  stroke-dasharray: 6 6;
+  animation: dash 1s linear infinite;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.blink {
+  animation: blink 1s steps(2, start) infinite;
+}
+
+/* soft light that follows the mouse (CursorGlow in components/Effects.tsx) */
+.cursor-glow {
+  background: radial-gradient(circle, rgb(var(--glow) / 0.12), transparent 60%);
+  opacity: 0.6;
+}
+/* light mode: a soft smoky-gray haze instead of a green glow (green disappears on ivory).
+   Raise the 0.11 / 0.06 values to make it stronger, lower them to make it fainter. */
+[data-theme="light"] .cursor-glow {
+  background: radial-gradient(
+    circle,
+    rgba(70, 76, 73, 0.11) 0%,
+    rgba(70, 76, 73, 0.06) 28%,
+    rgba(70, 76, 73, 0.02) 45%,
+    transparent 62%
+  );
+  filter: blur(24px); /* feathered edges, like smoke */
+  opacity: 1;
+}
+
+/* flow node: pops + flashes coral when the flow line's tip reaches it */
+.node-hit {
+  animation: node-hit 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.node-hit::after {
+  /* shockwave ring */
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  border: 2px solid var(--coral);
+  animation: node-ring 0.9s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes node-hit {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.45);
+    color: var(--coral);
+    border-color: var(--coral);
+    background: color-mix(in srgb, var(--coral) 18%, var(--bg));
+    box-shadow: 0 0 28px 6px rgba(255, 122, 102, 0.75);
+  }
+  60% {
+    color: var(--coral);
+    border-color: var(--coral);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes node-ring {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* nav: dot that travels along the arrow after the current step */
+.nav-pulse {
+  animation: nav-pulse 1.4s ease-in-out infinite;
+}
+@keyframes nav-pulse {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 6px);
+    opacity: 0;
+  }
+}
+
+/* skills: countdown bar on the active branch (its end triggers the next branch) */
+.skill-timer {
+  animation-name: skill-timer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  box-shadow: 0 0 8px rgb(var(--glow) / 0.8);
+}
+@keyframes skill-timer {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* desktop section snapping is done in JS (SmoothSnap in components/Effects.tsx)
+   so the glide can be slow and eased — CSS scroll-snap is too fast and can't be tuned */
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .flow-dash,
+  .nav-pulse,
+  .node-hit,
+  .node-hit::after,
+  .blink,
+  .grid-floor,
+  .scan,
+  .pulse-glow {
+    animation: none;
+  }
+}
