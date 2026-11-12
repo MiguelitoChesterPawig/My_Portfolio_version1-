@@ -19,7 +19,7 @@ const topics: { keys: string[]; answer: () => string }[] = [
     keys: ["project", "built", "build", "portfolio", "work on", "made"],
     answer: () => {
       const names = projects.map((p) => p.name).filter(real);
-      return `${n}'s projects include ${names.join(", ")}. The main one is ${names[0]} — check the Projects section for screenshots and details.`;
+      return `${n}'s projects include ${names.join(", ")}. The main one is ${names[0]}. Check the Projects section for screenshots and details.`;
     },
   },
   {
@@ -74,5 +74,5 @@ export function localAnswer(question: string) {
   const hit = topics.find((t) => t.keys.some((k) => q.includes(k)));
   if (hit) return hit.answer();
   if (/^(hi|hello|hey|good)/.test(q)) return `Hi! Ask me about ${n}'s projects, skills, experience or availability.`;
-  return `I'm not sure about that one. Try asking about ${n}'s projects, skills, experience or availability — or send him a message with the contact form.`;
+  return `I'm not sure about that one. Try asking about ${n}'s projects, skills, experience or availability, or send him a message with the contact form.`;
 }

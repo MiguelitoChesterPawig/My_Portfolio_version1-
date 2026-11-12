@@ -62,7 +62,7 @@ export function Lightbox({
           key="lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label={`${title} — ${caption}`}
+          aria-label={`${title}: ${caption}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -91,11 +91,11 @@ export function Lightbox({
           {/* image + arrows */}
           <div className="relative flex w-full max-w-6xl flex-1 items-center justify-center" style={{ minHeight: 0 }}>
             <AnimatePresence mode="wait">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <motion.img
                 key={src}
                 src={src}
-                alt={`${title} — ${caption}`}
+                alt={`${title}: ${caption}`}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}

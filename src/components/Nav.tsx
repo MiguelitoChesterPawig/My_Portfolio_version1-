@@ -130,7 +130,7 @@ export function Nav() {
           <a
             href="#start"
             onClick={(e) => go(e, "start")}
-            aria-label={`${profile.shortName} Pawig — home`}
+            aria-label={`${profile.name}: home`}
             className="group flex min-w-0 items-center gap-2.5 font-display font-bold text-fg"
           >
             <Logo className="h-7 w-[30px] shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5" />

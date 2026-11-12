@@ -70,7 +70,7 @@ export function Hero() {
             {greeting}
             {company ? (
               <>
-                , <span className="font-semibold text-coral">{company}</span> team 👋 — thanks for stopping by.
+                , <span className="font-semibold text-coral">{company}</span> team 👋 Thanks for stopping by.
               </>
             ) : (
               <>, I&apos;m</>

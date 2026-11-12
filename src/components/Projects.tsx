@@ -111,11 +111,11 @@ function Featured({ p }: { p: Project }) {
             className="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-edge"
           >
             <AnimatePresence mode="wait">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <motion.img
                 key={p.images[img]}
                 src={p.images[img]}
-                alt={`${p.name} — ${label ?? `screenshot ${img + 1}`}`}
+                alt={`${p.name}: ${label ?? `screenshot ${img + 1}`}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -282,11 +282,11 @@ function CardGallery({ p }: { p: Project }) {
         }
       >
         <AnimatePresence mode="wait">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <motion.img
             key={src}
             src={src}
-            alt={`${p.name} — ${label ?? `screenshot ${i + 1}`}`}
+            alt={`${p.name}: ${label ?? `screenshot ${i + 1}`}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

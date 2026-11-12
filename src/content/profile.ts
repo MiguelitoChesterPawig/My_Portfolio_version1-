@@ -102,11 +102,11 @@ export const skillGroups = [
 export const projects = [
   {
     featured: true,
-    name: "TechWorld — ETPCP-AI",
+    name: "TechWorld (ETPCP-AI)",
     subtitle:
       "E-commerce (B2C) Technology Product Configuration Platform with AI-Based Recommendation System for TechWorld Computer Store",
     role: "Lead Programmer · Systems Analyst · Back-end Developer",
-    period: "Jan 2026 – Present",
+    period: "Jan 2026 - Present",
     problem:
       "TechWorld Computer Store sold hardware in person only. Customers had no easy way to browse products, check compatibility or get recommendations online.",
     solution:
@@ -119,9 +119,9 @@ export const projects = [
       "4 user roles: Customer, Admin (Manager), Super Admin (Owner), Delivery Personnel",
       "Per-unit serial / IMEI tracking for returns",
     ],
-    tech: ["PHP", "MySQL", "JavaScript", "HTML/CSS", "XAMPP", "[ML library / tool]"],
+    tech: ["PHP", "MySQL", "JavaScript", "HTML/CSS", "XAMPP"],
     results: [
-      "Defended as a capstone in Oct 2026 — candidate for Best Capstone",
+      "Defended as a capstone in Oct 2026, candidate for Best Capstone",
       "Evaluated by 37 respondents: 30 customers, 2 managers, 5 IT experts",
     ],
     // Real bugs you solved — recruiters love these
@@ -144,7 +144,7 @@ export const projects = [
     featured: false,
     name: "Student Concern Management System",
     subtitle: "Hackathon build (team CTRL+ALT+DEFEAT): students submit concerns, AI routes them to the right office.",
-    role: "Team member — CTRL+ALT+DEFEAT",
+    role: "Team member (CTRL+ALT+DEFEAT)",
     period: "2026",
     problem: "Student concerns (academic, financial, welfare) get lost between offices, and nobody can see how long they take to resolve.",
     solution:
@@ -174,7 +174,7 @@ export const projects = [
   },
   {
     featured: false,
-    name: "Don't Blame The Kids — Apparel Shop App",
+    name: "Don't Blame The Kids (Apparel Shop App)",
     subtitle: "A Flutter + Firebase mobile shop for a clothing brand, with an admin side and live chat.",
     role: "Developer",
     period: "2025",
@@ -231,7 +231,7 @@ export const experience = [
   {
     role: "Freelance Computer Shop Attendant",
     org: "M&M Secret Computer Shop",
-    period: "Oct 2025 – Jul 2026",
+    period: "Oct 2025 - Jul 2026",
     points: [
       "Troubleshot common hardware, software and application errors on my own",
       "Monitored system health and reported server issues and unusual behavior to the owner",
@@ -242,7 +242,7 @@ export const experience = [
   {
     role: "Freelance Clown / Party Host",
     org: "PotPot Clowns, Zia's Clown & other agencies",
-    period: "2015 – Present",
+    period: "2015 - Present",
     points: [
       "Host and perform at children's parties and events",
       "Built confidence and public speaking skills",
@@ -252,13 +252,13 @@ export const experience = [
   {
     role: "Freelance Body & Face Painter",
     org: "PotPot Clowns, Zia's Clown & other agencies",
-    period: "2018 – Present",
+    period: "2018 - Present",
     points: ["Face and body painting for birthdays and events", "Create designs based on client requests"],
   },
   {
     role: "Freelance Assistant",
     org: "Poor Boiz Auto Repair",
-    period: "2020 – 2023",
+    period: "2020 - 2023",
     points: [
       "Assisted with bumper lifters, car painting and roof repairs",
       "Hands-on troubleshooting, repairs and maintenance",
@@ -271,9 +271,9 @@ export const experience = [
 
 /* ---------------- EDUCATION ---------------- */
 export const education = [
-  { level: "College", school: "Global Reciprocal Colleges", detail: "BS Information Technology", period: "2023 – Present", honor: "100% Scholar · MLALAF" },
-  { level: "Senior High School", school: "Arellano University (Jose Rizal Campus)", detail: "HUMSS", period: "2021 – 2023" },
-  { level: "High School", school: "Ramon Magsaysay (Cubao) High School", detail: "", period: "2017 – 2021" },
+  { level: "College", school: "Global Reciprocal Colleges", detail: "BS Information Technology", period: "2023 - Present", honor: "100% Scholar · MLALAF" },
+  { level: "Senior High School", school: "Arellano University (Jose Rizal Campus)", detail: "HUMSS", period: "2021 - 2023" },
+  { level: "High School", school: "Ramon Magsaysay (Cubao) High School", detail: "", period: "2017 - 2021" },
 ];
 
 /* ---------------- CERTIFICATES & SEMINARS ---------------- */
@@ -304,7 +304,7 @@ export const certificates = [
 
 /* ---------------- AI CHAT ----------------
    Extra facts the AI assistant can use when visitors ask questions.
-   Keep it honest — the AI will only answer from what's in this file. */
+   Keep it honest: the AI will only answer from what's in this file. */
 export const aiExtraNotes = [
   "Miguelito is interested in back-end development, systems analysis and IT support, but he is not limited to back-end. He is open to front-end, mobile, IT support and other roles, and loves exploring new things as he learns.",
   "He is willing to learn new tools and is currently learning OS installation.",

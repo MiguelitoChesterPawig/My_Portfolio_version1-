@@ -80,7 +80,7 @@ export function Contact() {
         // Email service not connected — open the visitor's email app with the message filled in
         const subject = encodeURIComponent(`Portfolio message from ${data.name}`);
         const extra = data.link ? `\n\nLink: ${data.link}` : "";
-        const body = encodeURIComponent(`${data.message}${extra}\n\n— ${data.name} (${data.email})`);
+        const body = encodeURIComponent(`${data.message}${extra}\n\nFrom: ${data.name} (${data.email})`);
         window.location.href = `mailto:${profile.links.email}?subject=${subject}&body=${body}`;
         setState("mail");
         return;
@@ -173,7 +173,7 @@ export function Contact() {
               <p className="mt-2 text-sm text-fg/70">
                 {state === "sent"
                   ? "Thank you. I'll get back to you soon."
-                  : "Your email app opened with the message ready — just press send."}
+                  : "Your email app opened with the message ready. Just press send."}
               </p>
               <button onClick={() => { setState("idle"); setFileName(""); }} className="mt-5 font-mono text-xs text-neon hover:underline">
                 ← send another

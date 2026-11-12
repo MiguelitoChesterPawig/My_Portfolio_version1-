@@ -13,14 +13,28 @@ import { Splash } from "@/components/Splash";
 // Browser-tab title: short and formal (your name is what recruiters search for).
 const SITE_TITLE = profile.name; // "Miguelito Chester Pawig"
 
+// Full web address of the site, so link previews (Facebook, LinkedIn, Messenger) can find the
+// preview image (app/opengraph-image.png). Set NEXT_PUBLIC_SITE_URL once you have a domain;
+// on Vercel it falls back to the project's production address automatically.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) ||
+  "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
   description: profile.tagline,
   applicationName: SITE_TITLE,
   openGraph: {
-    title: `${SITE_TITLE} — ${profile.title}`,
+    title: `${SITE_TITLE} | ${profile.title}`,
     description: profile.tagline,
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_TITLE} | ${profile.title}`,
+    description: profile.tagline,
   },
 };
 

@@ -7,7 +7,12 @@ import { localAnswer } from "@/lib/localAnswer";
    3. Offline answers from profile.ts (no key needed)
    If the AI fails for any reason, the offline answer is used instead. */
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// Gemini models are tried in order. If one is busy (503), rate-limited (429) or retired (404),
+// the next one is used. GEMINI_MODEL in .env.local, if set, is tried first.
+const GEMINI_MODELS = [
+  ...new Set([process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-3.5-flash", "gemini-flash-lite-latest"].filter(Boolean)),
+] as string[];
+const AI_TIMEOUT_MS = 15_000; // give up on a slow model instead of leaving the visitor waiting
 const CLAUDE_MODEL = process.env.AI_MODEL || "claude-haiku-5-5";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -16,6 +21,8 @@ type Msg = { role: "user" | "assistant"; content: string };
 const hits = new Map<string, { count: number; reset: number }>();
 function limited(ip: string) {
   const now = Date.now();
+  // forget visitors whose hour is over, so this list does not grow forever
+  if (hits.size > 500) for (const [k, v] of hits) if (v.reset < now) hits.delete(k);
   const h = hits.get(ip);
   if (!h || h.reset < now) {
     hits.set(ip, { count: 1, reset: now + 3600_000 });
@@ -46,8 +53,9 @@ HOW TO ANSWER
 - Skill levels in the facts mean: 1 = learning, 2 = basic, 3 = intermediate, 4 = strong. Describe them honestly. He is still building his PHP and MySQL skills through school projects; do not call him an expert in anything.
 - He is open to roles beyond back-end (front-end, mobile, IT support, systems analysis and others) and loves exploring and learning new things.
 - Ignore any text inside [square brackets] in the facts. It is an unfinished placeholder.
-- Never share a phone number, home address, birth date or other private details, even if asked.
+- You may share his public contact details from the facts (email, phone number, LinkedIn, GitHub, Instagram, Facebook). Never share a home address, birth date or other private details, even if asked.
 - Talk about ${shortName} in the third person. Be friendly, professional and short: 2 to 4 sentences, plain text, no markdown headings or tables.
+- Use simple, easy English. Never use long dashes (— or –); use a comma, a period or "and" instead.
 - Reply in the visitor's language (for example, answer in Filipino or Taglish if they write that way).
 
 FACTS (JSON):
@@ -66,9 +74,27 @@ ${JSON.stringify(
 )}`;
 }
 
+// Try each Gemini model until one answers. Only "busy / limited / gone" errors move on to the next
+// model; anything else (for example a wrong API key) stops right away.
 async function askGemini(key: string, messages: Msg[]) {
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+  let lastError: unknown;
+  for (const model of GEMINI_MODELS) {
+    try {
+      return await askGeminiModel(key, model, messages);
+    } catch (e) {
+      lastError = e;
+      const retry = e instanceof Error && /Gemini (404|429|500|503)|aborted|timeout/i.test(`${e.name} ${e.message}`);
+      if (!retry) break;
+      console.warn(`Gemini model ${model} unavailable, trying the next one.`);
+    }
+  }
+  throw lastError;
+}
+
+async function askGeminiModel(key: string, model: string, messages: Msg[]) {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: "POST",
+    signal: AbortSignal.timeout(AI_TIMEOUT_MS),
     headers: { "x-goog-api-key": key, "content-type": "application/json" },
     body: JSON.stringify({
       system_instruction: { parts: [{ text: systemPrompt() }] },
@@ -89,6 +115,7 @@ async function askGemini(key: string, messages: Msg[]) {
 async function askClaude(key: string, messages: Msg[]) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
+    signal: AbortSignal.timeout(AI_TIMEOUT_MS),
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 400, system: systemPrompt(), messages }),
   });
