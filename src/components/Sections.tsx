@@ -89,17 +89,98 @@ export function Experience() {
   );
 }
 
+const footerNav = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#projects", label: "Projects" },
+  { href: "#experience", label: "Experience" },
+  { href: "#contact", label: "Contact" },
+];
+
 export function Footer() {
+  const { email, github, linkedin, facebook, instagram } = profile.links;
+  const socials = [
+    { href: github, label: "GitHub", icon: "fi-brands-github" },
+    { href: linkedin, label: "LinkedIn", icon: "fi-brands-linkedin" },
+    { href: facebook, label: "Facebook", icon: "fi-brands-facebook" },
+    { href: instagram, label: "Instagram", icon: "fi-brands-instagram" },
+  ].filter((s) => s.href);
+  const heading = "font-mono text-xs uppercase tracking-widest text-neon/80";
+
   return (
     <footer className="relative border-t border-edge">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-muted md:flex-row">
-        <p>© 2026 {profile.name}</p>
-        <p className="font-mono text-xs">
-          <span className="text-neon">●</span> designed like a flowchart · built with Next.js ·{" "}
-          <a href="https://www.flaticon.com/uicons" target="_blank" rel="noreferrer" className="hover:text-neon">
-            icons by Flaticon
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1.2fr]">
+        {/* who */}
+        <div className="space-y-3 sm:col-span-2 lg:col-span-1">
+          <p className="font-display text-xl font-bold text-fg">{profile.name}</p>
+          <p className="text-sm font-medium text-fg/80">{profile.title}</p>
+          <p className="max-w-sm text-sm leading-relaxed text-muted">{profile.tagline}</p>
+          <p className="inline-flex items-center gap-2 rounded-full border border-edge px-3 py-1 text-xs text-fg/80">
+            <span className="h-2 w-2 rounded-full bg-neon" aria-hidden="true" />
+            {profile.status}
+          </p>
+        </div>
+
+        {/* pages */}
+        <nav aria-label="Footer">
+          <p className={heading}>Navigate</p>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {footerNav.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} className="text-muted transition hover:text-neon">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* contact */}
+        <div>
+          <p className={heading}>Get in touch</p>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted">
+            <li className="flex items-center gap-2.5">
+              <i className="fi fi-rr-envelope flex text-neon" aria-hidden="true" />
+              <a href={`mailto:${email}`} className="break-all transition hover:text-neon">
+                {email}
+              </a>
+            </li>
+            <li className="flex items-center gap-2.5">
+              <i className="fi fi-rr-marker flex text-neon" aria-hidden="true" />
+              {profile.location}
+            </li>
+            <li className="flex items-center gap-2.5">
+              <i className="fi fi-rr-download flex text-neon" aria-hidden="true" />
+              <a href={profile.cv} download="Pawig-Curriculum-Vitae.pdf" className="transition hover:text-neon">
+                Download CV (PDF)
+              </a>
+            </li>
+          </ul>
+          <div className="mt-5 flex gap-2.5">
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={s.label}
+                title={s.label}
+                className="grid h-9 w-9 place-items-center rounded-lg border border-edge text-muted transition hover:border-neon hover:text-neon"
+              >
+                <i className={`fi ${s.icon} flex`} aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-edge">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-5 text-xs text-muted sm:flex-row">
+          <p>© 2026 {profile.name}. All rights reserved.</p>
+          <a href="#start" className="transition hover:text-neon">
+            Back to top ↑
           </a>
-        </p>
+        </div>
       </div>
     </footer>
   );
