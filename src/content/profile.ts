@@ -216,13 +216,24 @@ export const projects = [
     problem: "Most student portfolios look the same and don't show how a person thinks.",
     solution:
       "A site built like a flowchart, with a built-in AI chat, a working contact form and personalized greetings for recruiters.",
-    features: ["AI chat assistant", "Contact form with email alerts", "Personalized greeting links"],
-    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Vercel"],
+    features: [
+      "AI chat assistant that only answers about me (Gemini, with backup models)",
+      "Contact form with email alerts and captcha",
+      "Personalized greeting links",
+      "Certificate viewer that opens in a pop-up",
+      "One-page CV made from the same data as the site",
+    ],
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Gemini API", "Supabase", "Vercel"],
     results: [],
     challenges: [],
-    images: ["/images/projects/placeholder.svg"],
+    images: [
+      "/images/projects/Portfolio(Home).jpg",
+      "/images/projects/Portfolio(Projects).jpg",
+      "/images/projects/Portfolio(AI Assistant).jpg",
+      "/images/projects/Portfolio(Certificates).jpg",
+    ],
     diagrams: [],
-    links: { live: "", github: "" },
+    links: { live: "", github: "https://github.com/MiguelitoChesterPawig/My_Portfolio_version1-" },
   },
 ];
 
