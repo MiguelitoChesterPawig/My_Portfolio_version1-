@@ -38,7 +38,7 @@ const topics: { keys: string[]; answer: () => string }[] = [
   },
   {
     keys: ["intern", "ojt", "hire", "available", "job", "open", "role", "position"],
-    answer: () => `${profile.status}. He's interested in back-end development, systems analysis and IT support. Use the contact form below to reach him.`,
+    answer: () => `${profile.status}. He's interested in back-end development, systems analysis and IT support, and he's also open to front-end, mobile and other roles. Use the contact form below to reach him.`,
   },
   {
     keys: ["experience", "job", "worked", "freelance", "clown", "paint", "car", "auto"],
@@ -59,8 +59,9 @@ const topics: { keys: string[]; answer: () => string }[] = [
     },
   },
   {
-    keys: ["contact", "email", "reach", "message", "talk"],
-    answer: () => `You can email ${n} at ${profile.links.email} or use the contact form at the end of this page.`,
+    keys: ["contact", "email", "reach", "message", "talk", "phone", "number", "call"],
+    answer: () =>
+      `You can email ${n} at ${profile.links.email}${profile.links.phone ? `, call or text ${profile.links.phone}` : ""}, or use the contact form at the end of this page.`,
   },
   {
     keys: ["who", "about", "yourself", "introduce", "tell me"],

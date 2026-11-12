@@ -1,5 +1,6 @@
-import { profile, experience, education, certificates } from "@/content/profile";
+import { profile, experience, education } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
+import { Certificates } from "./Certificates";
 
 export function About() {
   return (
@@ -81,26 +82,7 @@ export function Experience() {
           </ol>
 
           <h3 className="mb-5 mt-10 font-mono text-xs uppercase tracking-widest text-muted">{"// certificates & seminars"}</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {certificates.map((c, i) => (
-              <a
-                key={c.title + i}
-                href={c.link || c.image}
-                target="_blank"
-                rel="noreferrer"
-                className="glass glass-hover overflow-hidden rounded-xl"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={c.title} className="aspect-[4/3] w-full object-cover" />
-                <div className="p-3">
-                  <p className="text-sm font-semibold text-fg">{c.title}</p>
-                  <p className="text-xs text-muted">
-                    {c.issuer} · {c.date}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
+          <Certificates />
         </div>
       </div>
     </FlowSection>
@@ -113,7 +95,10 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 text-sm text-muted md:flex-row">
         <p>© 2026 {profile.name}</p>
         <p className="font-mono text-xs">
-          <span className="text-neon">●</span> designed like a flowchart · built with Next.js
+          <span className="text-neon">●</span> designed like a flowchart · built with Next.js ·{" "}
+          <a href="https://www.flaticon.com/uicons" target="_blank" rel="noreferrer" className="hover:text-neon">
+            icons by Flaticon
+          </a>
         </p>
       </div>
     </footer>

@@ -1,10 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { AnimatePresence, motion, useInView } from "motion/react";
 import { projects } from "@/content/profile";
+import { captionOf } from "@/lib/caption";
 import { FlowSection } from "./FlowSection";
-import { Lightbox, captionOf } from "./Lightbox";
+
+/* The full-screen viewer is its own chunk: it's only downloaded and mounted once a visitor
+   opens a screenshot. Hovering/focusing an image warms the chunk so the first open is instant. */
+const Lightbox = dynamic(() => import("./Lightbox").then((m) => m.Lightbox), { ssr: false });
+const preloadLightbox = () => void import("./Lightbox");
+
+/* Lightbox state for one gallery. `mounted` flips on at the first open and stays on, so the
+   close animation can play and later opens don't re-create anything. */
+function useLightbox() {
+  const [zoom, setZoom] = useState<number | null>(null); // lightbox index, null = closed
+  const [mounted, setMounted] = useState(false);
+  const open = (i: number) => {
+    setMounted(true);
+    setZoom(i);
+  };
+  return { zoom, setZoom, mounted, open };
+}
+
+/* false while the browser tab is in the background */
+function useTabVisible() {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const onChange = () => setVisible(!document.hidden);
+    document.addEventListener("visibilitychange", onChange);
+    return () => document.removeEventListener("visibilitychange", onChange);
+  }, []);
+  return visible;
+}
 
 type Project = (typeof projects)[number];
 const tabs = ["Overview", "Features", "Challenges", "Diagrams"] as const;
@@ -42,17 +71,21 @@ function Links({ p }: { p: Project }) {
 function Featured({ p }: { p: Project }) {
   const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
   const [img, setImg] = useState(0);
-  const [zoom, setZoom] = useState<number | null>(null); // lightbox index, null = closed
+  const { zoom, setZoom, mounted, open } = useLightbox();
   const [paused, setPaused] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(galleryRef, { amount: 0.3 });
+  const tabVisible = useTabVisible();
   const label = captionOf(p.images[img]);
   const n = p.images.length;
 
-  // auto-advance; restarts after any manual change, pauses on hover or while the lightbox is open
+  // auto-advance; restarts after any manual change. Stops on hover, while the lightbox is open,
+  // and whenever nobody can see it (scrolled away or tab in the background) — no timer, no image loads.
   useEffect(() => {
-    if (n <= 1 || paused || zoom !== null) return;
+    if (n <= 1 || paused || zoom !== null || !inView || !tabVisible) return;
     const t = setTimeout(() => setImg((k) => (k + 1) % n), 4000);
     return () => clearTimeout(t);
-  }, [img, n, paused, zoom]);
+  }, [img, n, paused, zoom, inView, tabVisible]);
 
   const visibleTabs = tabs.filter((t) => (t === "Challenges" ? p.challenges.length : t === "Diagrams" ? p.diagrams.length : true));
 
@@ -61,13 +94,19 @@ function Featured({ p }: { p: Project }) {
       <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon to-transparent" />
       <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         {/* gallery */}
-        <div className="min-w-0 border-b border-edge bg-sunken p-4 lg:border-b-0 lg:border-r">
-          <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setImg(k); }} onClose={() => setZoom(null)} />
+        <div ref={galleryRef} className="min-w-0 border-b border-edge bg-sunken p-4 lg:border-b-0 lg:border-r">
+          {mounted && (
+            <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setImg(k); }} onClose={() => setZoom(null)} />
+          )}
           <button
             type="button"
-            onClick={() => setZoom(img)}
-            onMouseEnter={() => setPaused(true)}
+            onClick={() => open(img)}
+            onMouseEnter={() => {
+              setPaused(true);
+              preloadLightbox();
+            }}
             onMouseLeave={() => setPaused(false)}
+            onFocus={preloadLightbox}
             title="View full size"
             className="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-edge"
           >
@@ -81,6 +120,8 @@ function Featured({ p }: { p: Project }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
+                loading="lazy"
+                decoding="async"
                 className="aspect-[21/10] w-full object-cover object-top"
               />
             </AnimatePresence>
@@ -113,7 +154,7 @@ function Featured({ p }: { p: Project }) {
         </div>
 
         {/* details */}
-        <div className="min-w-0 p-6 md:p-8">
+        <div className="min-w-0 p-5 md:p-8">
           <span className="rounded-full bg-coral px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white glow-coral">
             Featured project
           </span>
@@ -189,7 +230,7 @@ function Featured({ p }: { p: Project }) {
                   {p.diagrams.map((d) => (
                     <a key={d} href={d} target="_blank" rel="noreferrer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={d} alt="System diagram" className="w-full rounded-lg border border-edge" />
+                      <img src={d} alt="System diagram" loading="lazy" decoding="async" className="w-full rounded-lg border border-edge" />
                     </a>
                   ))}
                 </div>
@@ -210,7 +251,7 @@ function Featured({ p }: { p: Project }) {
 /* Screenshot gallery for a project card: arrows + dots, click the image to open it full size */
 function CardGallery({ p }: { p: Project }) {
   const [i, setI] = useState(0);
-  const [zoom, setZoom] = useState<number | null>(null); // lightbox index, null = closed
+  const { zoom, setZoom, mounted, open } = useLightbox();
   const n = p.images.length;
   const src = p.images[i];
   const label = captionOf(src);
@@ -218,17 +259,21 @@ function CardGallery({ p }: { p: Project }) {
 
   if (n <= 1) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={`${p.name} screenshot`} className="aspect-video w-full object-cover" />;
+    return <img src={src} alt={`${p.name} screenshot`} loading="lazy" decoding="async" className="aspect-video w-full object-cover" />;
   }
 
   const arrow =
     "absolute top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-edge bg-bg/80 text-fg opacity-0 backdrop-blur transition group-hover:opacity-100 hover:border-neon hover:text-neon focus-visible:opacity-100";
   return (
     <div className="group relative">
-      <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setI(k); }} onClose={() => setZoom(null)} />
+      {mounted && (
+        <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setI(k); }} onClose={() => setZoom(null)} />
+      )}
       <button
         type="button"
-        onClick={() => setZoom(i)}
+        onClick={() => open(i)}
+        onMouseEnter={preloadLightbox}
+        onFocus={preloadLightbox}
         title="View full size"
         className={
           mobile
@@ -246,6 +291,8 @@ function CardGallery({ p }: { p: Project }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
+            loading="lazy"
+            decoding="async"
             className={
               mobile
                 ? "h-full w-auto rounded-[14px] border-[3px] border-fg/15 object-contain shadow-[0_8px_30px_-10px_rgb(var(--glow)/0.5)]"

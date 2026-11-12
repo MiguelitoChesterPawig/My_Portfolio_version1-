@@ -17,16 +17,17 @@ export function FlowTrack({ children }: { children: React.ReactNode }) {
 
   return (
     <TrackContext.Provider value={{ progress: scaleY, ref }}>
-      <div ref={ref} className="relative ml-5 md:ml-8">
-        <div className="absolute bottom-0 left-0 top-0 w-px -translate-x-1/2 bg-edge" />
+      {/* phones: no side line — content uses the full width like a normal app; the line returns from md up */}
+      <div ref={ref} className="relative md:ml-8">
+        <div className="absolute bottom-0 left-0 top-0 hidden w-px -translate-x-1/2 bg-edge md:block" />
         <motion.div
           style={{ scaleY }}
-          className="absolute bottom-0 left-0 top-0 w-[2px] origin-top -translate-x-1/2 bg-gradient-to-b from-neon via-neon to-coral shadow-[0_0_12px_rgb(var(--glow)/0.8)]"
+          className="absolute bottom-0 left-0 top-0 hidden md:block w-[2px] origin-top -translate-x-1/2 bg-gradient-to-b from-neon via-neon to-coral shadow-[0_0_12px_rgb(var(--glow)/0.8)]"
         />
         {/* the pulse at the tip of the line */}
         <motion.div
           style={{ top }}
-          className="absolute left-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-coral shadow-[0_0_16px_4px_rgba(255,122,102,0.7)]"
+          className="absolute left-0 hidden md:block h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-coral shadow-[0_0_16px_4px_rgba(255,122,102,0.7)]"
         />
         {children}
       </div>

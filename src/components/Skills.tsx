@@ -74,7 +74,7 @@ export function Skills() {
                 }`}
               >
                 <span className="font-mono text-[10px] opacity-70">{pick === i ? "YES" : "NO"}</span>
-                <span className="truncate">{g.name}</span>
+                <span className="min-w-0 leading-tight">{g.name}</span>
                 {/* countdown bar: shows the branch will switch by itself */}
                 {pick === i && auto && (
                   <span
@@ -87,17 +87,6 @@ export function Skills() {
               </button>
             ))}
           </div>
-          <p className="mt-3 w-full text-center font-mono text-[10px] uppercase tracking-widest text-muted lg:text-left">
-            {auto ? (
-              <>
-                <span className="text-neon">▸</span> auto-running · click a branch to choose
-              </>
-            ) : (
-              <>
-                <span className="text-neon">●</span> manual · you picked {group.name}
-              </>
-            )}
-          </p>
         </div>
 
         {/* result panel */}

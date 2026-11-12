@@ -37,7 +37,9 @@ export const profile = {
     email: "miguelitochesterpawig@gmail.com",
     github: "https://github.com/MiguelitoChesterPawig",
     linkedin: "https://www.linkedin.com/in/miguelito-chester-pawig-28aa7144a/",
-    facebook: "", // leave empty to hide
+    phone: "0991 150 3855", // shown as written; the call link uses +63
+    instagram: "https://www.instagram.com/chstr_._/",
+    facebook: "https://www.facebook.com/share/1KTVfASat8/", // leave empty to hide
   },
 };
 
@@ -276,16 +278,35 @@ export const education = [
 
 /* ---------------- CERTIFICATES & SEMINARS ---------------- */
 export const certificates = [
-  { title: "[Certificate / Seminar Title]", issuer: "[Organizer]", date: "[Month Year]", image: "/images/certificates/placeholder.svg", link: "" },
-  { title: "[Certificate / Seminar Title]", issuer: "[Organizer]", date: "[Month Year]", image: "/images/certificates/placeholder.svg", link: "" },
-  { title: "[Certificate / Seminar Title]", issuer: "[Organizer]", date: "[Month Year]", image: "/images/certificates/placeholder.svg", link: "" },
+  {
+    title: "Python Essentials 1",
+    issuer: "Cisco Networking Academy and OpenEDG Python Institute",
+    date: "Nov 2024",
+    image: "/images/certificates/python-essentials-1.jpg",
+    link: "",
+  },
+  {
+    title: "Python Essentials 2",
+    issuer: "Cisco Networking Academy and OpenEDG Python Institute",
+    date: "Nov 2024",
+    image: "/images/certificates/python-essentials-2.jpg",
+    link: "",
+  },
+  {
+    // seminar with no certificate: the photo is the event's official class picture
+    title: "ASEAN Data Science Explorers Seminar",
+    issuer: "Break The Fake Movement, at Global Reciprocal Colleges",
+    date: "Jul 2026",
+    image: "/images/certificates/asean-data-science-explorers.jpg",
+    link: "",
+  },
 ];
 
 /* ---------------- AI CHAT ----------------
    Extra facts the AI assistant can use when visitors ask questions.
    Keep it honest — the AI will only answer from what's in this file. */
 export const aiExtraNotes = [
-  "Miguelito is interested in back-end development, systems analysis and IT support.",
+  "Miguelito is interested in back-end development, systems analysis and IT support, but he is not limited to back-end. He is open to front-end, mobile, IT support and other roles, and loves exploring new things as he learns.",
   "He is willing to learn new tools and is currently learning OS installation.",
   "He is a full (100%) scholar of the Motortrade Life and Livelihood Assistance Foundation (MLALAF) in college.",
   "[Add anything else you want the AI to know, e.g. availability, preferred work setup]",

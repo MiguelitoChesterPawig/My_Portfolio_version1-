@@ -7,11 +7,24 @@ export function CursorGlow() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
-    const move = (e: PointerEvent) => {
-      if (ref.current) ref.current.style.transform = `translate(${e.clientX - 300}px, ${e.clientY - 300}px)`;
+    // at most one style write per frame, however fast the mouse events arrive
+    let x = 0;
+    let y = 0;
+    let raf = 0;
+    const paint = () => {
+      raf = 0;
+      if (ref.current) ref.current.style.transform = `translate(${x - 300}px, ${y - 300}px)`;
     };
-    window.addEventListener("pointermove", move);
-    return () => window.removeEventListener("pointermove", move);
+    const move = (e: PointerEvent) => {
+      x = e.clientX;
+      y = e.clientY;
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", move);
+      cancelAnimationFrame(raf);
+    };
   }, []);
   return (
     <div
@@ -85,12 +98,20 @@ export function SmoothSnap() {
       idle = window.setTimeout(settle, 180); // wait until the user has stopped scrolling
     }
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", cancel, { passive: true });
-    window.addEventListener("touchstart", cancel, { passive: true });
-    window.addEventListener("keydown", cancel);
-    window.addEventListener("mousedown", cancel);
-    return () => {
+    // listeners exist only while the screen is desktop-sized: phones/tablets pay nothing per scroll
+    let attached = false;
+    function attach() {
+      if (attached) return;
+      attached = true;
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("wheel", cancel, { passive: true });
+      window.addEventListener("touchstart", cancel, { passive: true });
+      window.addEventListener("keydown", cancel);
+      window.addEventListener("mousedown", cancel);
+    }
+    function detach() {
+      if (!attached) return;
+      attached = false;
       cancel();
       clearTimeout(idle);
       window.removeEventListener("scroll", onScroll);
@@ -98,13 +119,21 @@ export function SmoothSnap() {
       window.removeEventListener("touchstart", cancel);
       window.removeEventListener("keydown", cancel);
       window.removeEventListener("mousedown", cancel);
+    }
+    const sync = () => (desktop.matches ? attach() : detach());
+    sync();
+    desktop.addEventListener("change", sync);
+    return () => {
+      desktop.removeEventListener("change", sync);
+      detach();
     };
   }, []);
   return null;
 }
 
 /* Text that "decodes" from random characters into the real text.
-   With `repeatEvery` (ms), it plays again on that timer — skipped while the tab is hidden. */
+   With `repeatEvery` (ms), it plays again on that timer — skipped while the tab is hidden
+   or the text is scrolled out of view (no re-renders nobody would see). */
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01<>/{}#";
 export function ScrambleText({
   text,
@@ -118,10 +147,14 @@ export function ScrambleText({
   className?: string;
 }) {
   const [out, setOut] = useState(text);
+  const spanRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let id: number | undefined;
     const total = 28;
+    let onScreen = true;
+    const io = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting));
+    if (spanRef.current) io.observe(spanRef.current);
 
     function play() {
       let frame = 0;
@@ -143,17 +176,18 @@ export function ScrambleText({
     const start = window.setTimeout(play, delay);
     const loop = repeatEvery
       ? window.setInterval(() => {
-          if (!document.hidden) play();
+          if (!document.hidden && onScreen) play();
         }, repeatEvery)
       : undefined;
     return () => {
+      io.disconnect();
       clearTimeout(start);
       clearTimeout(id);
       clearInterval(loop);
     };
   }, [text, delay, repeatEvery]);
   return (
-    <span className={className} aria-label={text}>
+    <span ref={spanRef} className={className} aria-label={text}>
       {out}
     </span>
   );

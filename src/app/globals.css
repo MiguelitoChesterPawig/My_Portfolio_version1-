@@ -19,6 +19,9 @@
   --panel-1: rgba(250, 247, 240, 0.05); /* glass card top */
   --panel-2: rgba(250, 247, 240, 0.015); /* glass card bottom */
   --glow-strength: 1;
+  --logo-analyze: #f2775b; /* logo: coral bar */
+  --logo-map: #2e9e70; /* logo: middle green bar */
+  --logo-build: #4be3a1; /* logo: the "P" */
   color-scheme: dark;
 }
 
@@ -35,6 +38,9 @@
   --panel-1: rgba(255, 255, 255, 0.85);
   --panel-2: rgba(255, 255, 255, 0.6);
   --glow-strength: 0.8;
+  --logo-analyze: #e0603f;
+  --logo-map: #5e9c7e;
+  --logo-build: #1f4d3a;
   color-scheme: light;
 }
 
@@ -65,6 +71,12 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+}
+
+/* safety net: nothing can make the page scroll sideways on phones (clip, unlike hidden, keeps the sticky nav working) */
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
@@ -249,24 +261,34 @@ body {
   }
 }
 
-/* nav: dot that travels along the arrow after the current step */
-.nav-pulse {
-  animation: nav-pulse 1.4s ease-in-out infinite;
+/* logo: colors fade when the theme switches */
+.site-logo rect,
+.site-logo path {
+  transition:
+    fill 0.3s,
+    stroke 0.3s;
 }
-@keyframes nav-pulse {
-  0% {
-    left: 0;
+
+/* nav drawer: menu items slide in one after another when it opens */
+.drawer-item {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.drawer-item-in {
+  opacity: 1;
+  transform: none;
+}
+/* nav: current-section title fades in when it changes */
+.nav-title {
+  animation: nav-title 0.4s ease-out;
+}
+@keyframes nav-title {
+  from {
     opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    left: calc(100% - 6px);
-    opacity: 0;
+    transform: translateY(4px);
   }
 }
 
@@ -294,12 +316,19 @@ body {
   }
 }
 
+/* sections mark themselves data-offscreen when scrolled away → their endless animations stop using CPU/GPU */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .flow-dash,
-  .nav-pulse,
+  .nav-title,
   .node-hit,
   .node-hit::after,
   .blink,
@@ -307,5 +336,8 @@ body {
   .scan,
   .pulse-glow {
     animation: none;
+  }
+  .drawer-item {
+    transition: none;
   }
 }

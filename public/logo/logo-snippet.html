@@ -1,0 +1,28 @@
+<!-- 1) Paste this SVG where the "MCP" chip is in your nav. It follows your light/dark theme. -->
+<a href="#start" class="site-logo" aria-label="Miguelito Pawig — home">
+  <svg viewBox="0 0 130 120" width="30" height="28" role="img" aria-hidden="true">
+    <rect x="6"  y="64" width="22" height="50"  rx="11" fill="var(--logo-analyze)"/>
+    <rect x="38" y="40" width="22" height="74"  rx="11" fill="var(--logo-map)"/>
+    <rect x="70" y="14" width="22" height="100" rx="11" fill="var(--logo-build)"/>
+    <path d="M81 23 H97 A17 17 0 0 1 97 57 H81" fill="none" stroke="var(--logo-build)" stroke-width="18" stroke-linecap="round"/>
+  </svg>
+</a>
+
+<!-- 2) Add to your CSS. Change [data-theme="dark"] to whatever selector your dark mode uses (e.g. .dark). -->
+<style>
+  :root {
+    --logo-analyze: #E0603F; /* coral  – analyze */
+    --logo-map:     #5E9C7E; /* green  – map     */
+    --logo-build:   #1F4D3A; /* deep   – build   */
+  }
+  [data-theme="dark"] {
+    --logo-analyze: #F2775B;
+    --logo-map:     #2E9E70;
+    --logo-build:   #4BE3A1;
+  }
+  .site-logo svg { display: block; }
+  .site-logo svg rect, .site-logo svg path { transition: fill .3s, stroke .3s; }
+</style>
+
+<!-- 3) In <head>: -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">

@@ -53,3 +53,7 @@ secrets/
 # local tooling output
 graphify-out/
 .claude/
+
+# CV build: keep the raw signature (and the HTML that embeds it) out of the repo
+scripts/cv/signature.png
+scripts/cv/cv.html

@@ -56,8 +56,9 @@ export function FlowSection({
   return (
     // negative scroll-margin = skip the top padding when jumping/snapping here,
     // so the heading lands just under the nav (24px gap) instead of 112px of empty space
-    <section id={id} className="relative scroll-mt-[-56px] py-20 md:scroll-mt-[-88px] md:py-28">
-      <div className="absolute left-0 top-20 -translate-x-1/2 md:top-28">
+    <section id={id} className="relative scroll-mt-[-32px] py-14 md:scroll-mt-[-88px] md:py-28">
+      {/* phones: the node sits above the heading; md+: it sits on the side flow line */}
+      <div className="mb-4 md:absolute md:left-0 md:top-28 md:mb-0 md:-translate-x-1/2">
         <motion.div
           ref={nodeRef}
           onAnimationEnd={(e) => e.animationName === "node-hit" && e.currentTarget.classList.remove("node-hit")}
@@ -72,7 +73,7 @@ export function FlowSection({
         </motion.div>
       </div>
 
-      <div className="pl-8 md:pl-14">
+      <div className="md:pl-14">
         <motion.div
           initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -85,7 +86,7 @@ export function FlowSection({
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-fg md:text-5xl">{title}</h2>
           {intro && <p className="mt-3 max-w-2xl text-muted">{intro}</p>}
         </motion.div>
-        <div className="mt-10">{children}</div>
+        <div className="mt-8 md:mt-10">{children}</div>
       </div>
     </section>
   );

@@ -18,7 +18,7 @@ export default function Home() {
       <main className="relative">
         <Hero />
         <div className="dot-grid">
-          <div className="mx-auto max-w-6xl px-5">
+          <div className="mx-auto max-w-6xl px-4 sm:px-5">
             <FlowTrack>
               <About />
               <Skills />

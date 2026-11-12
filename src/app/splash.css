@@ -1,0 +1,299 @@
+/* =====================================================================
+   SPLASH SCREEN — shown on every page load/refresh before the site (components/Splash.tsx)
+   Based on public/splash/splash.html. Dark is the default here (like the
+   rest of the site); [data-theme=light] switches it to the light colors.
+   ===================================================================== */
+#splash {
+  --sp-bg: #0d1411;
+  --sp-text: #eaf2ec;
+  --sp-muted: #8fa79a;
+  --sp-grid: rgba(75, 227, 161, 0.06);
+  --sp-analyze: #f2775b;
+  --sp-map: #2e9e70;
+  --sp-build: #4be3a1;
+  --sp-glow: rgba(75, 227, 161, 0.35);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  overflow: hidden;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+  font-family: var(--font-display);
+  /* failsafe: even if JavaScript never runs, the splash leaves by itself.
+     Its own keyframe name on purpose: reusing "sp-exit" would make the browser treat the real
+     exit as this same (already 3s old) animation and skip the fade. */
+  animation: sp-exit-failsafe 0.6s cubic-bezier(0.7, 0, 0.3, 1) 9s forwards;
+}
+[data-theme="light"] #splash {
+  --sp-bg: #f4f1e8;
+  --sp-text: #1a2b23;
+  --sp-muted: #5b6b62;
+  --sp-grid: rgba(31, 77, 58, 0.07);
+  --sp-analyze: #e0603f;
+  --sp-map: #5e9c7e;
+  --sp-build: #1f4d3a;
+  --sp-glow: rgba(31, 77, 58, 0.18);
+}
+
+/* no scrolling the page underneath while the intro plays */
+html:has(#splash:not(.sp-out)) {
+  overflow: hidden;
+}
+
+/* grid + soft vignette */
+#splash::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background-image: linear-gradient(var(--sp-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--sp-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 65%);
+  mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 65%);
+  opacity: 0;
+  animation: sp-fade 0.8s ease-out 0.1s forwards, sp-drift 6s linear infinite;
+}
+.sp-stage {
+  position: relative;
+  width: 150px;
+  height: 138px;
+}
+.sp-halo {
+  position: absolute;
+  inset: -60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sp-glow) 0%, transparent 60%);
+  opacity: 0;
+  transform: scale(0.6);
+  animation: sp-halo 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 1.95s forwards;
+}
+.sp-logo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sp-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+}
+.sp-b1 {
+  fill: var(--sp-analyze);
+  animation: sp-grow 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.55s forwards;
+}
+.sp-b2 {
+  fill: var(--sp-map);
+  animation: sp-grow 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.95s forwards;
+}
+.sp-b3 {
+  fill: var(--sp-build);
+  animation: sp-grow 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.15) 1.35s forwards;
+}
+.sp-bowl {
+  fill: none;
+  stroke: var(--sp-build);
+  stroke-width: 18;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: sp-draw 0.55s cubic-bezier(0.65, 0, 0.35, 1) 1.8s forwards;
+}
+/* scanning beam passes over the mark while it "builds" */
+.sp-scan {
+  position: absolute;
+  left: -18px;
+  right: -18px;
+  height: 2px;
+  bottom: 0;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--sp-build), transparent);
+  box-shadow: 0 0 12px var(--sp-build);
+  animation: sp-scan 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+}
+.sp-name {
+  font-weight: 700;
+  /* full name is longer, so it shrinks a bit on phones and can wrap to 2 centered lines */
+  font-size: clamp(22px, 6vw, 34px);
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  text-align: center;
+  padding: 0 16px;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(8px);
+  animation: sp-reveal 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 2.15s forwards;
+}
+
+/* status text: each line is shown during its own time window (pure CSS, so it
+   runs from the very first paint, before any JavaScript has loaded) */
+.sp-status {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--sp-muted);
+}
+.sp-line {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  animation: sp-on 0s linear var(--on) forwards, sp-off 0s linear var(--off) forwards;
+}
+.sp-line b {
+  font-weight: 500;
+  color: var(--sp-text);
+}
+.sp-line .ok {
+  color: var(--sp-build);
+}
+.sp-caret {
+  width: 7px;
+  height: 14px;
+  background: var(--sp-build);
+  animation: sp-blink 0.9s steps(1) infinite;
+}
+.sp-track {
+  width: 180px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--sp-grid);
+  overflow: hidden;
+}
+.sp-fill {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--sp-analyze), var(--sp-map), var(--sp-build));
+  animation: sp-load 2.5s cubic-bezier(0.5, 0, 0.2, 1) 0.3s forwards;
+}
+
+/* exit */
+#splash.sp-out {
+  animation: sp-exit 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+#splash.sp-out .sp-stage {
+  animation: sp-lift 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+@keyframes sp-fade {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sp-drift {
+  to {
+    background-position: 0 40px, 40px 0;
+  }
+}
+@keyframes sp-grow {
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes sp-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes sp-scan {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+  }
+}
+@keyframes sp-halo {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+}
+@keyframes sp-reveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+@keyframes sp-on {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sp-off {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sp-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes sp-load {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes sp-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes sp-exit-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes sp-lift {
+  to {
+    transform: scale(0.88) translateY(-12px);
+    filter: blur(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #splash *,
+  #splash::before {
+    animation-duration: 0.01s !important;
+    animation-delay: 0s !important;
+  }
+  /* no step-by-step text: just the final "ready" line */
+  #splash .sp-line {
+    animation: none !important;
+  }
+  #splash .sp-line:last-child {
+    opacity: 1;
+  }
+}

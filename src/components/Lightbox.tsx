@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
+import { captionOf } from "@/lib/caption";
 
-/* "(Admin Dashboard)" in a filename → "Admin Dashboard" caption */
-export const captionOf = (src: string) => src.match(/\(([^)]+)\)/)?.[1];
+export { captionOf };
 
 /* Full-screen screenshot viewer.
    Rendered into <body> with a portal: the glass cards use backdrop-filter, which would
@@ -13,12 +13,14 @@ export const captionOf = (src: string) => src.match(/\(([^)]+)\)/)?.[1];
 export function Lightbox({
   title,
   images,
+  captions,
   index,
   onIndex,
   onClose,
 }: {
   title: string;
   images: string[];
+  captions?: string[]; // optional label per image; otherwise read from the file name
   index: number | null; // null = closed
   onIndex: (i: number) => void;
   onClose: () => void;
@@ -48,7 +50,8 @@ export function Lightbox({
   if (typeof document === "undefined") return null;
 
   const src = open ? images[index] : "";
-  const caption = open ? (captionOf(src) ?? `Screenshot ${index + 1}`) : "";
+  const labelOf = (k: number) => captions?.[k] ?? captionOf(images[k]) ?? `Screenshot ${k + 1}`;
+  const caption = open ? labelOf(index) : "";
   const navBtn =
     "absolute top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/50 text-2xl text-white backdrop-blur transition hover:border-neon hover:text-neon";
 
@@ -134,13 +137,13 @@ export function Lightbox({
                 <button
                   key={s}
                   onClick={() => onIndex(k)}
-                  aria-label={`Show ${captionOf(s) ?? `screenshot ${k + 1}`}`}
+                  aria-label={`Show ${labelOf(k)}`}
                   className={`shrink-0 overflow-hidden rounded-md border-2 transition ${
                     k === index ? "border-coral" : "border-transparent opacity-50 hover:opacity-100"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s} alt="" className="h-12 w-20 object-cover object-top md:h-14 md:w-24" />
+                  <img src={s} alt="" loading="lazy" decoding="async" className="h-12 w-20 object-cover object-top md:h-14 md:w-24" />
                 </button>
               ))}
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "motion/react";
 import { profile } from "@/content/profile";
 import { ScrambleText } from "./Effects";
 
@@ -45,15 +45,18 @@ function Corners() {
 
 export function Hero() {
   const { greeting, company, log } = useGreeting();
+  // pause the looping CSS animations (grid floor, scan line, pulses) once the hero is scrolled away
+  const heroRef = useRef<HTMLElement>(null);
+  const heroVisible = useInView(heroRef, { initial: true }); // it is on screen at load
 
   return (
-    <section id="start" className="relative overflow-hidden">
+    <section id="start" ref={heroRef} data-offscreen={heroVisible ? undefined : ""} className="relative overflow-hidden">
       {/* background: glow orbs + moving grid floor */}
       <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-neon/15 blur-[120px]" />
       <div className="absolute -right-40 top-20 h-[400px] w-[400px] rounded-full bg-coral/10 blur-[120px]" />
       <div className="grid-floor" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-24 pt-6 md:grid-cols-[1.25fr_1fr]">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 pb-24 sm:px-5 pt-6 md:grid-cols-[1.25fr_1fr]">
         <div>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -134,7 +137,7 @@ export function Hero() {
             <Corners />
             <div className="relative overflow-hidden rounded-xl border border-edge">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={profile.photo} alt={profile.name} className="aspect-[4/5] w-full object-cover object-top" />
+              <img src={profile.photo} alt={profile.name} fetchPriority="high" className="aspect-[4/5] w-full object-cover object-top" />
               <div className="scan" />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-bg/90 to-transparent px-4 pb-3 pt-10 font-mono text-[11px]">
                 <span className="text-fg/80">{profile.location}</span>
