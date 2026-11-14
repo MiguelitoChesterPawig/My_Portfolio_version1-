@@ -49,6 +49,18 @@ export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
   const heroVisible = useInView(heroRef, { initial: true }); // it is on screen at load
 
+  const { email, phone, github, linkedin, instagram, facebook } = profile.links;
+  const contactButtons = [
+    { label: "Email", icon: "fi-rr-envelope", href: `mailto:${email}` },
+    { label: "Call", icon: "fi-rr-phone-call", href: phone && `tel:+63${phone.replace(/\D/g, "").replace(/^0/, "")}` },
+  ].filter((b) => b.href);
+  const socials = [
+    { label: "GitHub", icon: "fi-brands-github", href: github },
+    { label: "LinkedIn", icon: "fi-brands-linkedin", href: linkedin },
+    { label: "Instagram", icon: "fi-brands-instagram", href: instagram },
+    { label: "Facebook", icon: "fi-brands-facebook", href: facebook },
+  ].filter((s) => s.href);
+
   return (
     <section id="start" ref={heroRef} data-offscreen={heroVisible ? undefined : ""} className="relative overflow-hidden">
       {/* background: glow orbs + moving grid floor */}
@@ -56,7 +68,26 @@ export function Hero() {
       <div className="absolute -right-40 top-20 h-[400px] w-[400px] rounded-full bg-coral/10 blur-[120px]" />
       <div className="grid-floor" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 pb-24 sm:px-5 pt-6 md:grid-cols-[1.25fr_1fr]">
+      {/* mobile only: photo becomes the full-bleed hero backdrop, text sits on top of it */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.9 }}
+        className="pointer-events-none absolute inset-x-0 top-0 h-[80svh] md:hidden"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={profile.photo} alt="" fetchPriority="high" className="h-full w-full object-cover object-[center_15%]" />
+        {/* fade into the page: soft at the top, solid at the bottom so the text stays readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />
+        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-bg via-bg/85 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,var(--bg)_100%)] opacity-60" />
+        <span className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-edge bg-bg/60 px-3 py-1 font-mono text-[11px] text-neon backdrop-blur">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-neon" /> online
+        </span>
+      </motion.div>
+
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 pb-24 pt-[52svh] sm:px-5 md:grid-cols-[1.25fr_1fr] md:pt-6">
         <div>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -78,7 +109,7 @@ export function Hero() {
           </motion.p>
 
           <h1 className="glow-text mt-2 font-display text-5xl font-bold leading-[1.02] tracking-tight text-fg md:text-7xl">
-            <ScrambleText text={profile.name} delay={250} repeatEvery={10000} />
+            <ScrambleText text={profile.name} delay={250} />
           </h1>
 
           <motion.p
@@ -94,11 +125,49 @@ export function Hero() {
             {profile.tagline}
           </motion.p>
 
+          {/* quick contact: email / call + social icons */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.05 }}
+            className="mt-8 flex max-w-xl flex-col gap-4"
+          >
+            {/* top: email / call buttons, right */}
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              {contactButtons.map((b) => (
+                <a
+                  key={b.label}
+                  href={b.href}
+                  className="glass inline-flex items-center gap-2 rounded-lg border border-edge px-4 py-2 text-sm font-medium text-fg transition hover:border-neon hover:text-neon"
+                >
+                  <i className={`fi ${b.icon} flex text-neon`} aria-hidden="true" />
+                  {b.label}
+                </a>
+              ))}
+            </div>
+            {/* below: social icons, left */}
+            <div className="flex flex-wrap items-center gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  title={s.label}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-edge text-muted transition hover:-translate-y-0.5 hover:border-neon hover:text-neon hover:shadow-[0_0_14px_var(--neon)]"
+                >
+                  <i className={`fi ${s.icon} flex text-base`} aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.1 }}
-            className="mt-8 flex flex-wrap gap-3"
+            className="mt-4 flex flex-wrap gap-3"
           >
             <a href="#projects" className="rounded-lg bg-neon px-5 py-3 text-sm font-semibold text-bg transition hover:brightness-110 glow-neon">
               View my work
@@ -130,7 +199,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.7 }}
-          className="relative mx-auto w-full max-w-sm"
+          className="relative mx-auto hidden w-full max-w-sm md:block"
         >
           <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-neon/30 via-transparent to-coral/30 blur-2xl" />
           <div className="relative p-3">

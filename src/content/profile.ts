@@ -16,7 +16,7 @@ export const profile = {
   tagline: "I build the logic behind systems, and I map them before I code them.",
   location: "South Caloocan City, Philippines",
   status: "Open to internships, OJT and junior roles",
-  photo: "/images/profile.png",
+  photo: "/images/profile.webp", // 46 KB (the original PNG was 1.6 MB)
   cv: "/curriculum-vitae.pdf", // put your Curriculum Vitae in /public/curriculum-vitae.pdf
 
   about: [
@@ -144,7 +144,7 @@ export const projects = [
     featured: false,
     name: "Student Concern Management System",
     subtitle: "Hackathon build (team CTRL+ALT+DEFEAT): students submit concerns, AI routes them to the right office.",
-    role: "Team member (CTRL+ALT+DEFEAT)",
+    role: "Back-end Developer (team CTRL+ALT+DEFEAT)",
     period: "2026",
     problem: "Student concerns (academic, financial, welfare) get lost between offices, and nobody can see how long they take to resolve.",
     solution:
@@ -222,15 +222,21 @@ export const projects = [
       "Personalized greeting links",
       "Certificate viewer that opens in a pop-up",
       "One-page CV made from the same data as the site",
+      "Fully responsive on phone, tablet and desktop",
     ],
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Gemini API", "Supabase", "Vercel"],
     results: [],
     challenges: [],
     images: [
+      // "Mobile" in a file name → the gallery shows it in a phone-shaped frame
       "/images/projects/Portfolio(Home).jpg",
+      "/images/projects/Portfolio(Mobile Home).jpg",
       "/images/projects/Portfolio(Projects).jpg",
+      "/images/projects/Portfolio(Mobile Projects).jpg",
       "/images/projects/Portfolio(AI Assistant).jpg",
+      "/images/projects/Portfolio(Mobile AI Assistant).jpg",
       "/images/projects/Portfolio(Certificates).jpg",
+      "/images/projects/Portfolio(Mobile Menu).jpg",
     ],
     diagrams: [],
     links: { live: "", github: "https://github.com/MiguelitoChesterPawig/My_Portfolio_version1-" },
@@ -319,6 +325,7 @@ export const certificates = [
 export const aiExtraNotes = [
   "Miguelito is interested in back-end development, systems analysis and IT support, but he is not limited to back-end. He is open to front-end, mobile, IT support and other roles, and loves exploring new things as he learns.",
   "He is willing to learn new tools and is currently learning OS installation.",
+  "In the Student Concern Management System (hackathon, team CTRL+ALT+DEFEAT), Miguelito was the back-end developer. The only part that was not his was the front-end styling, which a teammate made.",
   "He is a full (100%) scholar of the Motortrade Life and Livelihood Assistance Foundation (MLALAF) in college.",
   "[Add anything else you want the AI to know, e.g. availability, preferred work setup]",
 ];

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 
-/* Intro screen shown before the site on every page load and refresh.
+/* Intro screen shown before the site on the first load of a visit (later loads skip it:
+   see splashScript in app/layout.tsx, which hides it with CSS before the first paint).
    It's in the server HTML, so it covers the page from
    the very first paint, and all its animation is CSS (app/splash.css). This component only
    decides when it leaves: after the page has loaded AND the intro has had MIN_SHOW ms. */
@@ -23,6 +24,11 @@ export function Splash() {
   const [phase, setPhase] = useState<"show" | "out" | "gone">("show");
 
   useEffect(() => {
+    // skipped this time (already hidden by CSS): just take it out of the page
+    if (document.documentElement.hasAttribute("data-splash-seen")) {
+      const t = window.setTimeout(() => setPhase("gone"), 0);
+      return () => clearTimeout(t);
+    }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const minShow = reduced ? 600 : MIN_SHOW;
     let wait: number | undefined;

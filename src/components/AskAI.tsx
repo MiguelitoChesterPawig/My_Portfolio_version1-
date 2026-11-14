@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { profile, chatSuggestions } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
+import { cannedAnswer } from "@/lib/localAnswer";
+
+// a believable "composing" pause for ready-made answers: ~1–2.6s, a bit longer for longer replies
+const composeDelay = (reply: string) => Math.min(900 + reply.length * 8 + Math.random() * 600, 2600);
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -16,6 +22,9 @@ export function AskAI() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  // hide suggestions already asked (clicked or typed)
+  const asked = new Set(messages.filter((m) => m.role === "user").map((m) => m.content.trim().toLowerCase()));
+  const unasked = chatSuggestions.filter((s) => !asked.has(s.toLowerCase()));
 
   useEffect(() => {
     boxRef.current?.scrollTo({ top: boxRef.current.scrollHeight, behavior: "smooth" });
@@ -29,6 +38,13 @@ export function AskAI() {
     setInput("");
     setLoading(true);
     try {
+      // common questions are answered from ready-made replies (no AI call, no tokens)
+      const canned = cannedAnswer(q);
+      if (canned) {
+        await wait(composeDelay(canned));
+        setMessages([...next, { role: "assistant", content: canned }]);
+        return;
+      }
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,7 +80,7 @@ export function AskAI() {
           </span>
         </div>
 
-        <div ref={boxRef} className="h-80 space-y-4 overflow-y-auto p-5 md:h-[clamp(12rem,calc(100svh-30rem),24rem)]" aria-live="polite">
+        <div ref={boxRef} className="max-h-80 min-h-32 space-y-4 overflow-y-auto p-5 md:h-[clamp(12rem,calc(100svh-30rem),24rem)] md:max-h-none" aria-live="polite">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               <p
@@ -76,20 +92,39 @@ export function AskAI() {
               </p>
             </div>
           ))}
-          {loading && <p className="font-mono text-xs text-neon">processing<span className="blink">_</span></p>}
+          {loading && (
+            <div className="flex justify-start" role="status">
+              <div className="flex items-center gap-2 rounded-xl border border-neon/20 bg-neon/5 px-4 py-2.5">
+                <span className="flex gap-1" aria-hidden="true">
+                  {[0, 150, 300].map((d) => (
+                    <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-neon" style={{ animationDelay: `${d}ms` }} />
+                  ))}
+                </span>
+                <span className="font-mono text-xs text-neon/80">composing reply</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-wrap gap-2 px-5 pb-3">
-          {chatSuggestions.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              className="rounded-full border border-edge px-3 py-1 text-xs text-fg/80 transition hover:border-neon hover:text-neon"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
+        {/* suggestion chips disappear once that question has been asked */}
+        {unasked.length > 0 && (
+          <div className="flex flex-wrap gap-2 px-5 pb-3">
+            <AnimatePresence initial={false}>
+              {unasked.map((s) => (
+                <motion.button
+                  key={s}
+                  layout
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => send(s)}
+                  className="rounded-full border border-edge px-3 py-1 text-xs text-fg/80 transition-colors hover:border-neon hover:text-neon"
+                >
+                  {s}
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         <form
           onSubmit={(e) => {

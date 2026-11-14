@@ -1,5 +1,6 @@
 /* =====================================================================
-   SPLASH SCREEN — shown on every page load/refresh before the site (components/Splash.tsx)
+   SPLASH SCREEN — shown on the first page load of a visit (components/Splash.tsx);
+   later loads/reloads in the same tab skip it (data-splash-seen, set in app/layout.tsx)
    Based on public/splash/splash.html. Dark is the default here (like the
    rest of the site); [data-theme=light] switches it to the light colors.
    ===================================================================== */
@@ -41,8 +42,13 @@
   --sp-glow: rgba(31, 77, 58, 0.18);
 }
 
+/* already seen this visit: never show it */
+html[data-splash-seen] #splash {
+  display: none;
+}
+
 /* no scrolling the page underneath while the intro plays */
-html:has(#splash:not(.sp-out)) {
+html:not([data-splash-seen]):has(#splash:not(.sp-out)) {
   overflow: hidden;
 }
 

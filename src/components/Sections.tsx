@@ -174,6 +174,14 @@ export function Footer() {
         </div>
       </div>
 
+      {/* verse */}
+      <figure className="border-t border-edge px-5 py-8 text-center">
+        <blockquote className="mx-auto max-w-2xl font-display text-base italic leading-relaxed text-fg/85 sm:text-lg">
+          “Commit to the Lord whatever you do, and he will establish your plans.”
+        </blockquote>
+        <figcaption className="mt-3 font-mono text-xs uppercase tracking-widest text-neon/80">Proverbs 16:3 (NIV)</figcaption>
+      </figure>
+
       <div className="border-t border-edge">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 py-5 text-xs text-muted sm:flex-row">
           <p>© 2026 {profile.name}. All rights reserved.</p>

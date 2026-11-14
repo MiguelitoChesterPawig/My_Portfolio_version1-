@@ -186,9 +186,17 @@ export function ScrambleText({
       clearInterval(loop);
     };
   }, [text, delay, repeatEvery]);
+  // The real text (invisible) sets the size; the scrambled text is drawn on top of it.
+  // Scrambled letters are often wider and would wrap onto an extra line, so letting them
+  // size the element made the whole page jump every few seconds (worst on phones).
   return (
-    <span ref={spanRef} className={className} aria-label={text}>
-      {out}
+    <span ref={spanRef} className={`relative inline-block ${className ?? ""}`} aria-label={text}>
+      <span aria-hidden="true" className="invisible">
+        {text}
+      </span>
+      <span aria-hidden="true" className="absolute inset-0">
+        {out}
+      </span>
     </span>
   );
 }

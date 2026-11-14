@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { projects } from "@/content/profile";
 import { captionOf } from "@/lib/caption";
+import { useSwipe } from "@/lib/useSwipe";
 import { FlowSection } from "./FlowSection";
 
 /* The full-screen viewer is its own chunk: it's only downloaded and mounted once a visitor
@@ -34,6 +35,13 @@ function useTabVisible() {
   }, []);
   return visible;
 }
+
+/* enter from the side you swiped towards, leave through the other */
+const slide = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 40 }),
+  center: { opacity: 1, x: 0 },
+  exit: (dir: number) => ({ opacity: 0, x: dir * -40 }),
+};
 
 type Project = (typeof projects)[number];
 const tabs = ["Overview", "Features", "Challenges", "Diagrams"] as const;
@@ -71,6 +79,7 @@ function Links({ p }: { p: Project }) {
 function Featured({ p }: { p: Project }) {
   const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
   const [img, setImg] = useState(0);
+  const [dir, setDir] = useState(1);
   const { zoom, setZoom, mounted, open } = useLightbox();
   const [paused, setPaused] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -78,12 +87,20 @@ function Featured({ p }: { p: Project }) {
   const tabVisible = useTabVisible();
   const label = captionOf(p.images[img]);
   const n = p.images.length;
+  const go = (k: number, d: number) => {
+    setDir(d);
+    setImg(((k % n) + n) % n);
+  };
+  const swipe = useSwipe(() => go(img - 1, -1), () => go(img + 1, 1));
 
   // auto-advance; restarts after any manual change. Stops on hover, while the lightbox is open,
   // and whenever nobody can see it (scrolled away or tab in the background) — no timer, no image loads.
   useEffect(() => {
     if (n <= 1 || paused || zoom !== null || !inView || !tabVisible) return;
-    const t = setTimeout(() => setImg((k) => (k + 1) % n), 4000);
+    const t = setTimeout(() => {
+      setDir(1);
+      setImg((k) => (k + 1) % n);
+    }, 4000);
     return () => clearTimeout(t);
   }, [img, n, paused, zoom, inView, tabVisible]);
 
@@ -96,11 +113,14 @@ function Featured({ p }: { p: Project }) {
         {/* gallery */}
         <div ref={galleryRef} className="min-w-0 border-b border-edge bg-sunken p-4 lg:border-b-0 lg:border-r">
           {mounted && (
-            <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setImg(k); }} onClose={() => setZoom(null)} />
+            <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); go(k, k >= img ? 1 : -1); }} onClose={() => setZoom(null)} />
           )}
           <button
             type="button"
-            onClick={() => open(img)}
+            onClick={() => {
+              open(img);
+            }}
+            {...(n > 1 ? swipe.handlers : {})}
             onMouseEnter={() => {
               setPaused(true);
               preloadLightbox();
@@ -108,23 +128,27 @@ function Featured({ p }: { p: Project }) {
             onMouseLeave={() => setPaused(false)}
             onFocus={preloadLightbox}
             title="View full size"
-            className="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-edge"
+            className="relative block w-full cursor-zoom-in touch-pan-y select-none overflow-hidden rounded-lg border border-edge"
           >
-            <AnimatePresence mode="wait">
-              { }
-              <motion.img
-                key={p.images[img]}
-                src={p.images[img]}
-                alt={`${p.name}: ${label ?? `screenshot ${img + 1}`}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                loading="lazy"
-                decoding="async"
-                className="aspect-[21/10] w-full object-cover object-top"
-              />
-            </AnimatePresence>
+            <div style={{ transform: `translateX(${swipe.dx}px)`, transition: swipe.dx ? "none" : "transform 0.2s ease-out" }}>
+              <AnimatePresence mode="wait" custom={dir} initial={false}>
+                <motion.img
+                  key={p.images[img]}
+                  src={p.images[img]}
+                  alt={`${p.name}: ${label ?? `screenshot ${img + 1}`}`}
+                  custom={dir}
+                  variants={slide}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.25 }}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="aspect-[21/10] w-full object-cover object-top"
+                />
+              </AnimatePresence>
+            </div>
             {label && (
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-3 pb-2 pt-8 text-left font-mono text-[11px] uppercase tracking-widest text-white/90">
                 {label}
@@ -136,8 +160,8 @@ function Featured({ p }: { p: Project }) {
               {p.images.map((src, i) => (
                 <button
                   key={src}
-                  onClick={() => setImg(i)}
-                  className={`h-2 flex-1 rounded-full ${i === img ? "bg-coral glow-coral" : "bg-fg/20"}`}
+                  onClick={() => go(i, i >= img ? 1 : -1)}
+                  className={`relative h-2 flex-1 rounded-full after:absolute after:-inset-y-3 after:inset-x-0 after:content-[''] ${i === img ? "bg-coral glow-coral" : "bg-fg/20"}`}
                   aria-label={`Show screenshot ${i + 1}`}
                 />
               ))}
@@ -251,11 +275,19 @@ function Featured({ p }: { p: Project }) {
 /* Screenshot gallery for a project card: arrows + dots, click the image to open it full size */
 function CardGallery({ p }: { p: Project }) {
   const [i, setI] = useState(0);
+  const [dir, setDir] = useState(1);
   const { zoom, setZoom, mounted, open } = useLightbox();
   const n = p.images.length;
+  const go = (k: number, d: number) => {
+    setDir(d);
+    setI(((k % n) + n) % n);
+  };
+  const swipe = useSwipe(() => go(i - 1, -1), () => go(i + 1, 1));
   const src = p.images[i];
   const label = captionOf(src);
-  const mobile = "mobile" in p && p.mobile; // phone screenshots → phone-shaped frame instead of a wide crop
+  // phone screenshots → phone-shaped frame instead of a wide crop: the whole project (p.mobile),
+  // or a single image whose name says "Mobile", e.g. "Portfolio(Mobile Home).jpg"
+  const mobile = ("mobile" in p && p.mobile) || /mobile/i.test(src);
 
   if (n <= 1) {
     // eslint-disable-next-line @next/next/no-img-element
@@ -263,48 +295,57 @@ function CardGallery({ p }: { p: Project }) {
   }
 
   const arrow =
-    "absolute top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-edge bg-bg/80 text-fg opacity-0 backdrop-blur transition group-hover:opacity-100 hover:border-neon hover:text-neon focus-visible:opacity-100";
+    "absolute top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-edge bg-bg/80 text-fg opacity-0 backdrop-blur transition group-hover:opacity-100 hover:border-neon hover:text-neon focus-visible:opacity-100 [@media(hover:none)]:opacity-80";
   return (
-    <div className="group relative">
+    <div className="group relative touch-pan-y select-none" {...swipe.handlers}>
       {mounted && (
-        <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); setI(k); }} onClose={() => setZoom(null)} />
+        <Lightbox title={p.name} images={p.images} index={zoom} onIndex={(k) => { setZoom(k); go(k, k >= i ? 1 : -1); }} onClose={() => setZoom(null)} />
       )}
       <button
         type="button"
-        onClick={() => open(i)}
+        onClick={() => {
+          open(i);
+        }}
         onMouseEnter={preloadLightbox}
         onFocus={preloadLightbox}
         title="View full size"
         className={
           mobile
-            ? "flex aspect-video w-full cursor-zoom-in items-center justify-center bg-sunken py-3"
-            : "block w-full cursor-zoom-in"
+            ? "flex aspect-video w-full cursor-zoom-in items-center justify-center overflow-hidden bg-sunken py-3"
+            : "block w-full cursor-zoom-in overflow-hidden"
         }
       >
-        <AnimatePresence mode="wait">
-          { }
-          <motion.img
-            key={src}
-            src={src}
-            alt={`${p.name}: ${label ?? `screenshot ${i + 1}`}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            loading="lazy"
-            decoding="async"
-            className={
-              mobile
-                ? "h-full w-auto rounded-[14px] border-[3px] border-fg/15 object-contain shadow-[0_8px_30px_-10px_rgb(var(--glow)/0.5)]"
-                : "aspect-video w-full object-cover object-top"
-            }
-          />
-        </AnimatePresence>
+        <div
+          className={mobile ? "flex h-full w-full items-center justify-center" : undefined}
+          style={{ transform: `translateX(${swipe.dx}px)`, transition: swipe.dx ? "none" : "transform 0.2s ease-out" }}
+        >
+          <AnimatePresence mode="wait" custom={dir} initial={false}>
+            <motion.img
+              key={src}
+              src={src}
+              alt={`${p.name}: ${label ?? `screenshot ${i + 1}`}`}
+              custom={dir}
+              variants={slide}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className={
+                mobile
+                  ? "h-full w-auto rounded-[14px] border-[3px] border-fg/15 object-contain shadow-[0_8px_30px_-10px_rgb(var(--glow)/0.5)]"
+                  : "aspect-video w-full object-cover object-top"
+              }
+            />
+          </AnimatePresence>
+        </div>
       </button>
-      <button aria-label="Previous screenshot" onClick={() => setI((i - 1 + n) % n)} className={`${arrow} left-2`}>
+      <button aria-label="Previous screenshot" onClick={() => go(i - 1, -1)} className={`${arrow} left-2`}>
         ‹
       </button>
-      <button aria-label="Next screenshot" onClick={() => setI((i + 1) % n)} className={`${arrow} right-2`}>
+      <button aria-label="Next screenshot" onClick={() => go(i + 1, 1)} className={`${arrow} right-2`}>
         ›
       </button>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-6">
@@ -313,9 +354,9 @@ function CardGallery({ p }: { p: Project }) {
           {p.images.map((s, k) => (
             <button
               key={s}
-              onClick={() => setI(k)}
+              onClick={() => go(k, k >= i ? 1 : -1)}
               aria-label={`Show screenshot ${k + 1}`}
-              className={`h-1.5 rounded-full transition-all ${k === i ? "w-4 bg-coral" : "w-1.5 bg-white/50 hover:bg-white"}`}
+              className={`relative h-1.5 rounded-full transition-all after:absolute after:-inset-2 after:content-[''] ${k === i ? "w-4 bg-coral" : "w-1.5 bg-white/50 hover:bg-white"}`}
             />
           ))}
         </span>
