@@ -349,3 +349,7 @@ body {
     transition: none;
   }
 }
+
+/* side menu list: still scrolls on very short screens, but without a visible scrollbar */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

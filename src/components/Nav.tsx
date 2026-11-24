@@ -180,7 +180,7 @@ export function Nav() {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-edge px-5 py-4">
+        <div className="flex items-center justify-between border-b border-edge px-5 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-edge bg-sunken">
               <Logo className="h-6 w-[26px]" />
@@ -190,7 +190,7 @@ export function Nav() {
                 {profile.shortName}
               </p>
               <p className="font-mono text-[11px] text-muted">
-                portfolio · menu
+                portfolio Ã‚Â· menu
               </p>
             </div>
           </div>
@@ -204,17 +204,17 @@ export function Nav() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <ol className="relative px-3 py-4">
+        <div className="no-scrollbar flex-1 overflow-y-auto">
+          <ol className="relative px-3 py-2">
             {/* flow rail: dim track + glowing fill up to the current step */}
             <span
               aria-hidden="true"
-              className="absolute bottom-10 left-[35px] top-10 w-px bg-muted/30"
+              className="absolute bottom-7 left-[35px] top-7 w-px bg-muted/30"
             />
             <span
               aria-hidden="true"
-              className="absolute left-[34.5px] top-10 w-[2px] rounded-full bg-gradient-to-b from-neon to-coral shadow-[0_0_8px_rgb(var(--glow)/0.8)] transition-[height] duration-500"
-              style={{ height: `calc((100% - 5rem) * ${progress / 100})` }}
+              className="absolute left-[34.5px] top-7 w-[2px] rounded-full bg-gradient-to-b from-neon to-coral shadow-[0_0_8px_rgb(var(--glow)/0.8)] transition-[height] duration-500"
+              style={{ height: `calc((100% - 3.5rem) * ${progress / 100})` }}
             />
             {steps.map((s, i) => {
               const isActive = s.id === active;
@@ -229,7 +229,7 @@ export function Nav() {
                     href={`#${s.id}`}
                     onClick={(e) => go(e, s.id)}
                     aria-current={isActive ? "location" : undefined}
-                    className={`group relative flex items-center gap-4 rounded-xl px-3 py-3 transition ${
+                    className={`group relative flex items-center gap-4 rounded-xl px-3 py-2 transition ${
                       isActive
                         ? "bg-neon/10 shadow-[inset_0_0_0_1px_rgb(var(--glow)/0.45)]"
                         : "hover:bg-sunken"
@@ -248,7 +248,7 @@ export function Nav() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
-                        className={`block font-display text-base font-semibold ${isActive ? "text-neon" : "text-fg"}`}
+                        className={`block font-display text-[15px] font-semibold ${isActive ? "text-neon" : "text-fg"}`}
                       >
                         {s.label}
                       </span>
@@ -275,11 +275,11 @@ export function Nav() {
           </ol>
         </div>
 
-        <div className="border-t border-edge px-5 py-4">
+        <div className="border-t border-edge px-5 py-3">
           <a
             href="#contact"
             onClick={(e) => go(e, "contact")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-neon px-4 py-3 font-display font-semibold text-bg transition hover:brightness-110 active:scale-[0.98]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-neon px-4 py-2.5 font-display font-semibold text-bg transition hover:brightness-110 active:scale-[0.98]"
           >
             Let&apos;s work together
             <svg
@@ -294,7 +294,7 @@ export function Nav() {
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </a>
-          <p className="mt-3 text-center font-mono text-[11px] text-muted">
+          <p className="mt-2 text-center font-mono text-[11px] text-muted">
             press esc to close
           </p>
         </div>

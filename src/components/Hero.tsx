@@ -43,6 +43,65 @@ function Corners() {
   );
 }
 
+/* "Availability" panel: a status readout styled like the rest of the HUD */
+function Availability() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5 }}
+      className="glass relative rounded-xl border border-edge p-5 md:p-6"
+    >
+      <Corners />
+      <div className="flex items-center justify-between gap-3 border-b border-edge pb-4">
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-neon" />
+          </span>
+          <h2 className="font-display text-lg font-semibold text-fg">Availability</h2>
+        </div>
+        <span className="rounded border border-neon/50 bg-neon/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-neon">
+          status: open
+        </span>
+      </div>
+
+      {/* phones: one column; tablets: 2; desktop: 3 columns x 2 rows */}
+      <dl className="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+        {profile.availability.map((row, i) => (
+          <motion.div
+            key={row.label}
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 + i * 0.08 }}
+            className="border-b border-edge/60 py-3.5"
+          >
+            <dt className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted">
+              <i className={`fi ${row.icon} flex text-neon`} aria-hidden="true" />
+              {row.label}
+            </dt>
+            <dd className="mt-2 text-sm text-fg">
+              {Array.isArray(row.value) ? (
+                <span className="flex flex-wrap gap-1.5">
+                  {row.value.map((v) => (
+                    <span key={v} className="whitespace-nowrap rounded-md border border-edge bg-fg/5 px-2 py-0.5 text-[13px]">
+                      {v}
+                    </span>
+                  ))}
+                </span>
+              ) : (
+                row.value
+              )}
+            </dd>
+          </motion.div>
+        ))}
+      </dl>
+    </motion.div>
+  );
+}
+
 export function Hero() {
   const { greeting, company, log } = useGreeting();
   // pause the looping CSS animations (grid floor, scan line, pulses) once the hero is scrolled away
@@ -87,14 +146,18 @@ export function Hero() {
         </span>
       </motion.div>
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 pb-24 pt-[52svh] sm:px-5 md:grid-cols-[1.25fr_1fr] md:pt-6">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-x-14 gap-y-12 px-4 pb-24 pt-[52svh] sm:px-5 md:grid-cols-[1.4fr_1fr] md:pt-10">
         <div>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 rounded-full border border-neon/50 bg-neon/5 px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-neon"
           >
-            <span className="h-2 w-2 animate-pulse rounded-full bg-coral" /> Start
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-neon" />
+            </span>
+            Open for OJT / Internship
           </motion.div>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-6 text-lg text-muted">
@@ -118,80 +181,85 @@ export function Hero() {
             transition={{ delay: 0.9 }}
             className="mt-4 bg-gradient-to-r from-neon to-coral bg-clip-text font-display text-xl font-semibold text-transparent md:text-2xl"
           >
-            {profile.title}
+            {/* each role stays whole: wraps as "Back-end Developer &" / "Systems Analyst", never a lone word */}
+            {profile.title.split(" & ").map((part, i, all) => (
+              <span key={part}>
+                <span className="whitespace-nowrap">
+                  {part}
+                  {i < all.length - 1 ? " &" : ""}
+                </span>
+                {i < all.length - 1 ? " " : ""}
+              </span>
+            ))}
           </motion.p>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-4 max-w-xl text-muted">
             {profile.tagline}
           </motion.p>
 
-          {/* quick contact: email / call + social icons */}
+          {/* main actions: one primary, one secondary, AI assistant as a quieter outline */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.05 }}
-            className="mt-8 flex max-w-xl flex-col gap-4"
+            className="mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap"
           >
-            {/* top: email / call buttons, right */}
-            <div className="flex flex-wrap items-center justify-end gap-3">
-              {contactButtons.map((b) => (
-                <a
-                  key={b.label}
-                  href={b.href}
-                  className="glass inline-flex items-center gap-2 rounded-lg border border-edge px-4 py-2 text-sm font-medium text-fg transition hover:border-neon hover:text-neon"
-                >
-                  <i className={`fi ${b.icon} flex text-neon`} aria-hidden="true" />
-                  {b.label}
-                </a>
-              ))}
-            </div>
-            {/* below: social icons, left */}
-            <div className="flex flex-wrap items-center gap-2">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  title={s.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-edge text-muted transition hover:-translate-y-0.5 hover:border-neon hover:text-neon hover:shadow-[0_0_14px_var(--neon)]"
-                >
-                  <i className={`fi ${s.icon} flex text-base`} aria-hidden="true" />
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
-            className="mt-4 flex flex-wrap gap-3"
-          >
-            <a href="#projects" className="rounded-lg bg-neon px-5 py-3 text-sm font-semibold text-bg transition hover:brightness-110 glow-neon">
+            <a href="#projects" className="rounded-lg bg-neon px-5 py-3 text-center text-sm font-semibold text-bg transition hover:brightness-110 glow-neon">
               View my work
-            </a>
-            <a href="#ask" className="rounded-lg bg-coral px-5 py-3 text-sm font-semibold text-white transition hover:bg-coral-deep glow-coral">
-              Ask my AI assistant
             </a>
             <a
               href={profile.cv}
               download="Pawig-Curriculum-Vitae.pdf"
-              className="rounded-lg border border-edge px-5 py-3 text-sm font-semibold text-fg transition hover:border-neon hover:text-neon"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-edge px-5 py-3 text-sm font-semibold text-fg transition hover:border-neon hover:text-neon"
             >
-              Download Curriculum Vitae
+              <i className="fi fi-rr-download flex" aria-hidden="true" />
+              Download CV
+            </a>
+            <a
+              href="#ask"
+              className="col-span-2 rounded-lg border border-coral/60 px-5 py-3 text-center text-sm font-semibold text-coral transition hover:bg-coral hover:text-white"
+            >
+              Ask my AI assistant
             </a>
           </motion.div>
 
-          <div className="glass mt-8 max-w-md rounded-lg p-4 font-mono text-xs leading-6 text-fg/80">
-            {log.map((line, i) => (
-              <motion.p key={line} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.3 + i * 0.45 }}>
-                <span className="text-neon">&gt;</span> {line}
-              </motion.p>
+          {/* contact row: email / call and socials on one line */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.15 }}
+            className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-3"
+          >
+            {/* two groups that each stay on one line; on phones the socials drop below as a set */}
+            <div className="flex items-center gap-2">
+            {contactButtons.map((b) => (
+              <a
+                key={b.label}
+                href={b.href}
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-edge px-4 text-sm text-fg/90 transition hover:border-neon hover:text-neon"
+              >
+                <i className={`fi ${b.icon} flex text-neon`} aria-hidden="true" />
+                {b.label}
+              </a>
             ))}
-            <span className="blink text-coral">▌</span>
-          </div>
+            </div>
+            <span className="mx-1 hidden h-6 w-px bg-edge sm:block" aria-hidden="true" />
+            <div className="flex items-center gap-2">
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                title={s.label}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-edge text-muted transition hover:-translate-y-0.5 hover:border-neon hover:text-neon hover:shadow-[0_0_14px_var(--neon)]"
+              >
+                <i className={`fi ${s.icon} flex text-base`} aria-hidden="true" />
+              </a>
+            ))}
+            </div>
+          </motion.div>
         </div>
 
         {/* photo inside a HUD frame */}
@@ -199,7 +267,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.7 }}
-          className="relative mx-auto hidden w-full max-w-sm md:block"
+          className="relative mx-auto hidden w-full max-w-[340px] md:block"
         >
           <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-neon/30 via-transparent to-coral/30 blur-2xl" />
           <div className="relative p-3">
@@ -216,10 +284,17 @@ export function Hero() {
               </div>
             </div>
           </div>
-          <div className="absolute -bottom-4 -right-2 rotate-2 rounded-md bg-coral px-3 py-2 font-mono text-xs text-white glow-coral">
-            {profile.status}
-          </div>
         </motion.div>
+
+        {/* availability strip spans the full width under the intro */}
+        <div className="md:col-span-2">
+          <Availability />
+          {log[0] && (
+            <p className="mt-3 font-mono text-[11px] text-muted">
+              <span className="text-neon">&gt;</span> {log[0]} <span className="blink text-coral">▌</span>
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );

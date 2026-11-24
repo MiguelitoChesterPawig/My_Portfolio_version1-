@@ -33,6 +33,17 @@ export const profile = {
     { label: "Based in", value: "South Caloocan City, PH" },
   ],
 
+  // "Availability" card under the hero. Delete a row to hide it.
+  // value can be text, or a list ["A", "B"] which shows as tags.
+  availability: [
+    { icon: "fi-rr-search", label: "Seeking", value: ["OJT", "Internship", "Junior IT role"] },
+    { icon: "fi-rr-briefcase", label: "Roles", value: ["Systems Analyst", "IT Support", "Junior Web Developer"] },
+    { icon: "fi-rr-marker", label: "Location", value: "South Caloocan City · can report anywhere in Metro Manila (own motorcycle)" },
+    { icon: "fi-rr-building", label: "Work setup", value: ["Onsite", "Hybrid"] },
+    { icon: "fi-rr-calendar", label: "Can start", value: "January 2027 · as soon as possible" },
+    { icon: "fi-rr-hourglass-end", label: "OJT hours", value: "600 hours required" },
+  ] as { icon: string; label: string; value: string | string[] }[],
+
   links: {
     email: "miguelitochesterpawig@gmail.com",
     github: "https://github.com/MiguelitoChesterPawig",
@@ -44,7 +55,9 @@ export const profile = {
 };
 
 /* ---------------- SKILLS ----------------
-   level: 1 = learning, 2 = basic, 3 = intermediate, 4 = strong */
+   level 3 or 4 = shown under "Have used in projects or work"
+   level 1 or 2 = shown under "Know the basics, still learning"
+   (levels are never shown as numbers or bars on the site) */
 export const skillGroups = [
   {
     name: "Back-end & Logic",
@@ -244,11 +257,16 @@ export const projects = [
 ];
 
 /* ---------------- EXPERIENCE ---------------- */
+/* proof: photos shown when a visitor clicks the job card.
+   Put the files in /public/images/experience/ and list them here, e.g.
+   proof: ["/images/experience/shop-1.jpg", "/images/experience/shop-2.jpg"]
+   A name in (brackets) becomes the caption: "shop(Front desk).jpg" -> "Front desk". */
 export const experience = [
   {
     role: "Freelance Computer Shop Attendant",
     org: "M&M Secret Computer Shop",
     period: "Oct 2025 - Jul 2026",
+    proof: [] as string[],
     points: [
       "Troubleshot common hardware, software and application errors on my own",
       "Monitored system health and reported server issues and unusual behavior to the owner",
@@ -260,6 +278,7 @@ export const experience = [
     role: "Freelance Clown, Party Host & Face Painter",
     org: "PotPot Clowns, Zia's Clown & other agencies",
     period: "2015 - Present",
+    proof: [] as string[],
     points: [
       "Host and perform at children's parties and events",
       "Face and body painting for birthdays and events, with designs based on client requests",
@@ -271,6 +290,7 @@ export const experience = [
     role: "Freelance Assistant",
     org: "Poor Boiz Auto Repair",
     period: "2020 - 2023",
+    proof: [] as string[],
     points: [
       "Assisted with bumper lifters, car painting and roof repairs",
       "Hands-on troubleshooting, repairs and maintenance",
@@ -283,9 +303,31 @@ export const experience = [
 
 /* ---------------- EDUCATION ---------------- */
 export const education = [
-  { level: "College", school: "Global Reciprocal Colleges", detail: "BS Information Technology", period: "2023 - Present", honor: "100% Scholar · MLALAF" },
-  { level: "Senior High School", school: "Arellano University (Jose Rizal Campus)", detail: "HUMSS", period: "2021 - 2023" },
-  { level: "High School", school: "Ramon Magsaysay (Cubao) High School", detail: "", period: "2017 - 2021" },
+  {
+    level: "College",
+    school: "Global Reciprocal Colleges",
+    detail: "BS Information Technology",
+    period: "2023 - Present",
+    honor: "100% Scholar · MLALAF",
+    website: "https://grc.edu.ph/",
+    preview: "/images/education/grc.jpg",
+  },
+  {
+    level: "Senior High School",
+    school: "Arellano University (Jose Rizal Campus)",
+    detail: "HUMSS",
+    period: "2021 - 2023",
+    website: "https://www.arellano.edu.ph/news/arellano-university-news/chiefs-justice-au-jose-rizal-campus-proudly-welcomes-its-new/",
+    preview: "/images/education/arellano.jpg",
+  },
+  {
+    level: "High School",
+    school: "Ramon Magsaysay (Cubao) High School",
+    detail: "",
+    period: "2017 - 2021",
+    website: "https://sites.google.com/depedqc.ph/rmchs",
+    preview: "/images/education/rmchs.jpg",
+  },
 ];
 
 /* ---------------- CERTIFICATES & SEMINARS ---------------- */

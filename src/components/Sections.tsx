@@ -1,6 +1,7 @@
-import { profile, experience, education } from "@/content/profile";
+import { profile } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
 import { Certificates } from "./Certificates";
+import { WorkList, EducationList } from "./Credentials";
 
 export function About() {
   return (
@@ -37,49 +38,11 @@ export function Experience() {
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
           <h3 className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">{"// work"}</h3>
-          <ol className="space-y-5">
-            {experience.map((e) => (
-              <li key={e.role + e.org} className="glass glass-hover relative overflow-hidden rounded-xl p-5 pl-6">
-                <span className="absolute bottom-0 left-0 top-0 w-[3px] bg-coral shadow-[0_0_12px_rgba(255,122,102,0.8)]" />
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h4 className="font-display text-lg font-semibold text-fg">{e.role}</h4>
-                  <span className="font-mono text-xs text-muted">{e.period}</span>
-                </div>
-                <p className="text-sm font-medium text-coral">{e.org}</p>
-                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-fg/70 marker:text-neon">
-                  {e.points.map((p) => (
-                    <li key={p}>{p}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ol>
+          <WorkList />
         </div>
         <div>
           <h3 className="mb-5 font-mono text-xs uppercase tracking-widest text-muted">{"// education"}</h3>
-          <ol className="space-y-5">
-            {education.map((e) => (
-              <li key={e.school} className="glass glass-hover relative overflow-hidden rounded-xl p-5 pl-6">
-                <span className="absolute bottom-0 left-0 top-0 w-[3px] bg-neon shadow-[0_0_12px_rgb(var(--glow)/0.8)]" />
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h4 className="font-display text-lg font-semibold text-fg">{e.school}</h4>
-                  <span className="font-mono text-xs text-muted">{e.period}</span>
-                </div>
-                <p className="text-sm text-neon/90">
-                  {e.level}
-                  {e.detail && ` · ${e.detail}`}
-                </p>
-                {"honor" in e && e.honor && (
-                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-coral/40 bg-coral/10 px-3 py-1 font-mono text-[11px] text-coral">
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-                      <path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7L12 2z" />
-                    </svg>
-                    {e.honor}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ol>
+          <EducationList />
 
           <h3 className="mb-5 mt-10 font-mono text-xs uppercase tracking-widest text-muted">{"// certificates & seminars"}</h3>
           <Certificates />
