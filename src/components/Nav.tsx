@@ -190,7 +190,7 @@ export function Nav() {
                 {profile.shortName}
               </p>
               <p className="font-mono text-[11px] text-muted">
-                portfolio Ã‚Â· menu
+                portfolio · menu
               </p>
             </div>
           </div>

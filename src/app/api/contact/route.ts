@@ -4,6 +4,7 @@
    3. Sends the visitor an auto-reply (only if CONTACT_AUTO_REPLY=true and your domain is verified in Resend) */
 
 import { profile } from "@/content/profile";
+import { isFieldClean, EMAIL_PATTERN } from "@/lib/formRules";
 
 // Keep in sync with MAX_IMAGE_MB in src/components/Contact.tsx
 const MAX_IMAGE_MB = 4;
@@ -59,13 +60,18 @@ export async function POST(req: Request) {
   const name = String(body.name ?? "").trim().slice(0, 100);
   const email = String(body.email ?? "").trim().slice(0, 150);
   const message = String(body.message ?? "").trim().slice(0, 3000);
-  if (!name || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!name || !message || !EMAIL_PATTERN.test(email)) {
     return fail("Please fill in your name, a valid email and a message.");
   }
+  // only the characters each field needs (blocks things like <script>)
+  if (!isFieldClean("name", name)) return fail("Your name can only have letters, spaces and . ' -");
+  if (!isFieldClean("email", email)) return fail("Please enter a valid email.");
+  if (!isFieldClean("message", message)) return fail("Your message has symbols that aren't allowed: < > { } [ ] ` \\ | ^ ~ $");
 
   // optional link: only real http(s) web addresses
   let link = String(body.link ?? "").trim().slice(0, 500);
   if (link) {
+    if (!isFieldClean("link", link)) return fail("The link has characters that aren't allowed.");
     try {
       const u = new URL(link);
       if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error();

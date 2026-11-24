@@ -257,16 +257,17 @@ export const projects = [
 ];
 
 /* ---------------- EXPERIENCE ---------------- */
-/* proof: photos shown when a visitor clicks the job card.
-   Put the files in /public/images/experience/ and list them here, e.g.
-   proof: ["/images/experience/shop-1.jpg", "/images/experience/shop-2.jpg"]
-   A name in (brackets) becomes the caption: "shop(Front desk).jpg" -> "Front desk". */
+/* proof: photos and .mp4 videos shown when a visitor clicks the job card.
+   Put the files in /public/images/experience/ and list them here.
+   All photos are shown together as a collage on the first slide;
+   every video gets its own slide after that and plays when the visitor reaches it.
+   Use lowercase file names (the live server treats "Clown1.jpg" and "clown1.jpg" as different files). */
 export const experience = [
   {
     role: "Freelance Computer Shop Attendant",
     org: "M&M Secret Computer Shop",
     period: "Oct 2025 - Jul 2026",
-    proof: [] as string[],
+    proof: ["/images/experience/comshop-1.jpg", "/images/experience/comshop-2.mp4", "/images/experience/comshop-3.mp4"],
     points: [
       "Troubleshot common hardware, software and application errors on my own",
       "Monitored system health and reported server issues and unusual behavior to the owner",
@@ -278,7 +279,7 @@ export const experience = [
     role: "Freelance Clown, Party Host & Face Painter",
     org: "PotPot Clowns, Zia's Clown & other agencies",
     period: "2015 - Present",
-    proof: [] as string[],
+    proof: ["/images/experience/clown-1.jpg", "/images/experience/clown-2.jpg", "/images/experience/clown-3.jpg", "/images/experience/clown-4.jpg"],
     points: [
       "Host and perform at children's parties and events",
       "Face and body painting for birthdays and events, with designs based on client requests",
@@ -290,7 +291,7 @@ export const experience = [
     role: "Freelance Assistant",
     org: "Poor Boiz Auto Repair",
     period: "2020 - 2023",
-    proof: [] as string[],
+    proof: ["/images/experience/assistant-1.jpg", "/images/experience/assistant-2.jpg", "/images/experience/assistant-3.jpg"],
     points: [
       "Assisted with bumper lifters, car painting and roof repairs",
       "Hands-on troubleshooting, repairs and maintenance",

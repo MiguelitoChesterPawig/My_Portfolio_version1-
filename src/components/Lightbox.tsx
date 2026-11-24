@@ -123,7 +123,7 @@ export function Lightbox({
                   transition={{ duration: 0.2 }}
                   onClick={(e) => e.stopPropagation()}
                   draggable={false}
-                  className="max-h-full max-w-full rounded-lg border border-white/10 object-contain shadow-[0_0_80px_-20px_rgb(var(--glow)/0.6)]"
+                  className="max-h-[calc(100svh-7rem)] max-w-full rounded-lg md:max-h-[calc(100svh-10rem)] border border-white/10 object-contain shadow-[0_0_80px_-20px_rgb(var(--glow)/0.6)]"
                 />
               </AnimatePresence>
             </div>

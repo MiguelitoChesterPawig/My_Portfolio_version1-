@@ -5,6 +5,7 @@ import Script from "next/script";
 import { motion } from "motion/react";
 import { profile } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
+import { cleanField, fieldHint, type FieldName } from "@/lib/formRules";
 
 const input =
   "mt-1 w-full rounded-lg border border-edge bg-sunken px-3 py-2.5 text-fg placeholder:text-muted/60 transition focus:border-neon focus:shadow-[0_0_0_3px_rgb(var(--glow)/0.15)] focus:outline-none";
@@ -31,6 +32,7 @@ export function Contact() {
   const [error, setError] = useState("");
   const [captchaReady, setCaptchaReady] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [hint, setHint] = useState<{ field: FieldName; text: string } | null>(null);
   const captchaBox = useRef<HTMLDivElement>(null);
   const captchaId = useRef<string | null>(null);
   const showForm = state !== "sent" && state !== "mail";
@@ -42,8 +44,8 @@ export function Contact() {
     const id = window.turnstile.render(el, {
       sitekey: siteKey,
       theme: "auto",
-      // fixed 300px box instead of stretching edge to edge; compact on very narrow phones
-      size: el.clientWidth < 300 ? "compact" : "normal",
+      // always the wide 300x65 rectangle; on very narrow phones it is scaled down (see captchaScale)
+      size: "normal",
     });
     captchaId.current = id;
     return () => {
@@ -51,6 +53,45 @@ export function Contact() {
       captchaId.current = null;
     };
   }, [captchaReady, showForm]);
+
+  // Shrink the 300px-wide captcha to fit phones narrower than that, instead of the square "compact" one.
+  const captchaFrame = useRef<HTMLDivElement>(null);
+  const [captchaScale, setCaptchaScale] = useState(1);
+  useEffect(() => {
+    const frame = captchaFrame.current;
+    if (!frame) return;
+    const fit = () => setCaptchaScale(Math.min(1, frame.clientWidth / 300));
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(frame);
+    return () => ro.disconnect();
+  }, [showForm]);
+
+  // hide the "symbol not allowed" note after a few seconds
+  useEffect(() => {
+    if (!hint) return;
+    const t = setTimeout(() => setHint(null), 4000);
+    return () => clearTimeout(t);
+  }, [hint]);
+
+  // removes characters a field doesn't allow, right as they're typed or pasted
+  function guard(field: FieldName) {
+    return (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const el = e.currentTarget;
+      const { clean, changed } = cleanField(field, el.value);
+      if (!changed) return;
+      const removed = el.value.length - clean.length;
+      const pos = Math.max(0, (el.selectionStart ?? clean.length) - removed);
+      el.value = clean;
+      try {
+        el.setSelectionRange(pos, pos); // keep the cursor in place (not supported on email/url inputs)
+      } catch {}
+      setHint({ field, text: fieldHint[field] });
+    };
+  }
+
+  const note = (field: FieldName) =>
+    hint?.field === field && <span className="mt-1 block text-xs text-coral" role="status">{hint.text}</span>;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -191,23 +232,27 @@ export function Contact() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted">Name</span>
-                <input name="name" required maxLength={100} placeholder="Juan Dela Cruz" className={input} />
+                <input name="name" required maxLength={100} placeholder="Juan Dela Cruz" onInput={guard("name")} className={input} />
+                {note("name")}
               </label>
               <label className="block text-sm">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted">Email</span>
-                <input name="email" type="email" required maxLength={150} placeholder="you@company.com" className={input} />
+                <input name="email" type="email" required maxLength={150} placeholder="you@company.com" onInput={guard("email")} className={input} />
+                {note("email")}
               </label>
             </div>
             <label className="block text-sm">
               <span className="font-mono text-xs uppercase tracking-wider text-muted">Message</span>
-              <textarea name="message" required rows={5} maxLength={3000} placeholder="Hi! I'd like to talk about..." className={input} />
+              <textarea name="message" required rows={5} maxLength={3000} placeholder="Hi! I'd like to talk about..." onInput={guard("message")} className={input} />
+              {note("message")}
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted">
                   Link <span className="normal-case tracking-normal text-muted/70">(optional)</span>
                 </span>
-                <input name="link" type="url" maxLength={500} placeholder="https://..." className={input} />
+                <input name="link" type="url" maxLength={500} placeholder="https://..." onInput={guard("link")} className={input} />
+                {note("link")}
               </label>
               <label className="block text-sm">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted">
@@ -228,7 +273,15 @@ export function Contact() {
                 />
               </label>
             </div>
-            {siteKey && <div ref={captchaBox} className="flex min-h-[65px] justify-center py-2" />}
+            {siteKey && (
+              <div ref={captchaFrame} className="flex w-full justify-center py-2" style={{ height: 65 * captchaScale + 16 }}>
+                <div
+                  ref={captchaBox}
+                  className="h-[65px] w-[300px] shrink-0 origin-top"
+                  style={{ transform: `scale(${captchaScale})` }}
+                />
+              </div>
+            )}
             {state === "error" && <p className="text-sm text-coral">{error}</p>}
             <button
               disabled={state === "sending"}
