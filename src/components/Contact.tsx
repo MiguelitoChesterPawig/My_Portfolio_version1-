@@ -39,7 +39,12 @@ export function Contact() {
   useEffect(() => {
     const el = captchaBox.current;
     if (!siteKey || !captchaReady || !showForm || !el || !window.turnstile) return;
-    const id = window.turnstile.render(el, { sitekey: siteKey, theme: "auto", size: "flexible" });
+    const id = window.turnstile.render(el, {
+      sitekey: siteKey,
+      theme: "auto",
+      // fixed 300px box instead of stretching edge to edge; compact on very narrow phones
+      size: el.clientWidth < 300 ? "compact" : "normal",
+    });
     captchaId.current = id;
     return () => {
       window.turnstile?.remove(id);
@@ -223,7 +228,7 @@ export function Contact() {
                 />
               </label>
             </div>
-            {siteKey && <div ref={captchaBox} className="min-h-[65px]" />}
+            {siteKey && <div ref={captchaBox} className="flex min-h-[65px] justify-center py-2" />}
             {state === "error" && <p className="text-sm text-coral">{error}</p>}
             <button
               disabled={state === "sending"}

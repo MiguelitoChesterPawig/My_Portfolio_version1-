@@ -323,6 +323,14 @@ body {
   animation-play-state: paused !important;
 }
 
+/* phones: section nodes stay still (no pop / shockwave) so they don't look tappable */
+@media (max-width: 767px) {
+  .node-hit,
+  .node-hit::after {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

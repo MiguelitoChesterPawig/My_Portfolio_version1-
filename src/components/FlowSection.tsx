@@ -16,6 +16,8 @@ function useNodeHit() {
     const node = nodeRef.current;
     const box = track?.ref.current;
     if (!node || !box) return;
+    // phones: keep the node still so it doesn't look like a button
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
     const b = box.getBoundingClientRect();
     const n = node.getBoundingClientRect();
     const at = (n.top + n.height / 2 - b.top) / b.height; // node position along the line, 0..1
@@ -68,7 +70,7 @@ export function FlowSection({
           transition={{ type: "spring", stiffness: 260, damping: 16 }}
           className="relative grid h-10 w-10 place-items-center rounded-full border border-neon/60 bg-bg text-neon glow-neon"
         >
-          <span className="absolute inset-0 animate-ping rounded-full border border-neon/40 [animation-duration:2.5s]" />
+          <span className="absolute inset-0 hidden animate-ping md:block rounded-full border border-neon/40 [animation-duration:2.5s]" />
           <Shape name={shape} className="h-5 w-5" />
         </motion.div>
       </div>

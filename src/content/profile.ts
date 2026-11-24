@@ -257,20 +257,15 @@ export const experience = [
     ],
   },
   {
-    role: "Freelance Clown / Party Host",
+    role: "Freelance Clown, Party Host & Face Painter",
     org: "PotPot Clowns, Zia's Clown & other agencies",
     period: "2015 - Present",
     points: [
       "Host and perform at children's parties and events",
+      "Face and body painting for birthdays and events, with designs based on client requests",
       "Built confidence and public speaking skills",
       "Handle clients and adjust to their requests on the spot",
     ],
-  },
-  {
-    role: "Freelance Body & Face Painter",
-    org: "PotPot Clowns, Zia's Clown & other agencies",
-    period: "2018 - Present",
-    points: ["Face and body painting for birthdays and events", "Create designs based on client requests"],
   },
   {
     role: "Freelance Assistant",
