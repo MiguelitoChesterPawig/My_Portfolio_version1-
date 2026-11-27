@@ -9,6 +9,7 @@ import "./globals.css";
 import "./splash.css";
 import { profile } from "@/content/profile";
 import { Splash } from "@/components/Splash";
+import { ViberNotice } from "@/components/ViberNotice";
 import { SITE_URL } from "@/lib/site";
 
 // Browser-tab title: short and formal (your name is what recruiters search for).
@@ -70,6 +71,7 @@ export default function RootLayout({
       <body className="min-h-screen font-sans">
         <Splash />
         {children}
+        <ViberNotice />
       </body>
     </html>
   );

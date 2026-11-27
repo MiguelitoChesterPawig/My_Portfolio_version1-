@@ -143,7 +143,7 @@ export function Contact() {
     }
   }
 
-  const { email, phone, github, linkedin, instagram, facebook } = profile.links;
+  const { email, phone, github, linkedin, instagram, facebook, whatsapp, telegram, viber } = profile.links;
   const handle = (url: string) => url.split("/").filter(Boolean).pop() ?? "";
   // icon = Flaticon UIcons class (fi-brands-* for logos, fi-rr-* for regular rounded)
   const links = [
@@ -155,6 +155,9 @@ export function Contact() {
       text: phone,
       external: false,
     },
+    { label: "WhatsApp", icon: "fi-brands-whatsapp", href: whatsapp, text: phone, external: true },
+    { label: "Telegram", icon: "fi-brands-telegram", href: telegram, text: `@${handle(telegram)}`, external: true },
+    { label: "Viber", icon: "fi-rr-comment-alt-dots", href: viber, text: phone, external: false },
     { label: "GitHub", icon: "fi-brands-github", href: github, text: handle(github), external: true },
     { label: "LinkedIn", icon: "fi-brands-linkedin", href: linkedin, text: profile.name, external: true },
     { label: "Instagram", icon: "fi-brands-instagram", href: instagram, text: `@${handle(instagram)}`, external: true },

@@ -108,7 +108,7 @@ export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
   const heroVisible = useInView(heroRef, { initial: true }); // it is on screen at load
 
-  const { email, phone, github, linkedin, instagram, facebook } = profile.links;
+  const { email, phone, github, linkedin, instagram, facebook, whatsapp, telegram, viber } = profile.links;
   const contactButtons = [
     { label: "Email", icon: "fi-rr-envelope", href: `mailto:${email}` },
     { label: "Call", icon: "fi-rr-phone-call", href: phone && `tel:+63${phone.replace(/\D/g, "").replace(/^0/, "")}` },
@@ -118,6 +118,9 @@ export function Hero() {
     { label: "LinkedIn", icon: "fi-brands-linkedin", href: linkedin },
     { label: "Instagram", icon: "fi-brands-instagram", href: instagram },
     { label: "Facebook", icon: "fi-brands-facebook", href: facebook },
+    { label: "WhatsApp", icon: "fi-brands-whatsapp", href: whatsapp },
+    { label: "Telegram", icon: "fi-brands-telegram", href: telegram },
+    { label: "Viber", icon: "fi-rr-comment-alt-dots", href: viber },
   ].filter((s) => s.href);
 
   return (

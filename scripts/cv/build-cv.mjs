@@ -127,7 +127,7 @@ const contact = [
   ["LinkedIn", profile.links.linkedin && profile.name, profile.links.linkedin],
   ["Email", profile.links.email, `mailto:${profile.links.email}`],
   ["GitHub", profile.links.github && url(profile.links.github), profile.links.github],
-  ["Phone", profile.links.phone, profile.links.phone && `tel:+63${profile.links.phone.replace(/D/g, "").replace(/^0/, "")}`],
+  ["Phone", profile.links.phone, profile.links.phone && `tel:+63${profile.links.phone.replace(/\D/g, "").replace(/^0/, "")}`],
 ].filter(([, v]) => real(v));
 
 const personalRows = [

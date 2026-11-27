@@ -48,7 +48,11 @@ export const profile = {
     email: "miguelitochesterpawig@gmail.com",
     github: "https://github.com/MiguelitoChesterPawig",
     linkedin: "https://www.linkedin.com/in/miguelito-chester-pawig-28aa7144a/",
-    phone: "0991 150 3855", // shown as written; the call link uses +63
+    phone: "0950 589 0737", // shown as written; the call link uses +63
+    // chat apps (leave empty to hide)
+    whatsapp: "https://wa.me/639505890737",
+    telegram: "https://t.me/MCPAWIG",
+    viber: "viber://chat?number=%2B639505890737",
     instagram: "https://www.instagram.com/chstr_._/",
     facebook: "https://www.facebook.com/share/1KTVfASat8/", // leave empty to hide
   },

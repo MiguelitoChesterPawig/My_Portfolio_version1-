@@ -61,12 +61,15 @@ const footerNav = [
 ];
 
 export function Footer() {
-  const { email, github, linkedin, facebook, instagram } = profile.links;
+  const { email, github, linkedin, facebook, instagram, whatsapp, telegram, viber } = profile.links;
   const socials = [
     { href: github, label: "GitHub", icon: "fi-brands-github" },
     { href: linkedin, label: "LinkedIn", icon: "fi-brands-linkedin" },
     { href: facebook, label: "Facebook", icon: "fi-brands-facebook" },
     { href: instagram, label: "Instagram", icon: "fi-brands-instagram" },
+    { href: whatsapp, label: "WhatsApp", icon: "fi-brands-whatsapp" },
+    { href: telegram, label: "Telegram", icon: "fi-brands-telegram" },
+    { href: viber, label: "Viber", icon: "fi-rr-comment-alt-dots" },
   ].filter((s) => s.href);
   const heading = "font-mono text-xs uppercase tracking-widest text-neon/80";
 
