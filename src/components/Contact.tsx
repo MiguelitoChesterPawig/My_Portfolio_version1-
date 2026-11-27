@@ -5,6 +5,7 @@ import Script from "next/script";
 import { motion } from "motion/react";
 import { profile } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
+import { Icon } from "./Icon";
 import { cleanField, fieldHint, type FieldName } from "@/lib/formRules";
 
 const input =
@@ -157,7 +158,7 @@ export function Contact() {
     },
     { label: "WhatsApp", icon: "fi-brands-whatsapp", href: whatsapp, text: phone, external: true },
     { label: "Telegram", icon: "fi-brands-telegram", href: telegram, text: `@${handle(telegram)}`, external: true },
-    { label: "Viber", icon: "fi-rr-comment-alt-dots", href: viber, text: phone, external: false },
+    { label: "Viber", icon: "viber", href: viber, text: phone, external: false },
     { label: "GitHub", icon: "fi-brands-github", href: github, text: handle(github), external: true },
     { label: "LinkedIn", icon: "fi-brands-linkedin", href: linkedin, text: profile.name, external: true },
     { label: "Instagram", icon: "fi-brands-instagram", href: instagram, text: `@${handle(instagram)}`, external: true },
@@ -191,7 +192,7 @@ export function Contact() {
               className="glass glass-hover flex items-center justify-between rounded-xl px-5 py-4"
             >
               <span className="flex shrink-0 items-center gap-3 font-mono text-xs uppercase tracking-widest text-neon/80">
-                <i className={`fi ${l.icon} flex text-base text-neon`} aria-hidden="true" />
+                <Icon name={l.icon} className="text-base text-neon" />
                 {l.label}
               </span>
               <span className="min-w-0 truncate pl-4 text-sm font-medium text-fg">

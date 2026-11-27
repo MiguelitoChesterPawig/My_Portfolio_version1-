@@ -1,5 +1,6 @@
 import { profile } from "@/content/profile";
 import { FlowSection } from "./FlowSection";
+import { Icon } from "./Icon";
 import { Certificates } from "./Certificates";
 import { WorkList, EducationList } from "./Credentials";
 
@@ -69,7 +70,7 @@ export function Footer() {
     { href: instagram, label: "Instagram", icon: "fi-brands-instagram" },
     { href: whatsapp, label: "WhatsApp", icon: "fi-brands-whatsapp" },
     { href: telegram, label: "Telegram", icon: "fi-brands-telegram" },
-    { href: viber, label: "Viber", icon: "fi-rr-comment-alt-dots" },
+    { href: viber, label: "Viber", icon: "viber" },
   ].filter((s) => s.href);
   const heading = "font-mono text-xs uppercase tracking-widest text-neon/80";
 
@@ -133,7 +134,7 @@ export function Footer() {
                 title={s.label}
                 className="grid h-9 w-9 place-items-center rounded-lg border border-edge text-muted transition hover:border-neon hover:text-neon"
               >
-                <i className={`fi ${s.icon} flex`} aria-hidden="true" />
+                <Icon name={s.icon} />
               </a>
             ))}
           </div>

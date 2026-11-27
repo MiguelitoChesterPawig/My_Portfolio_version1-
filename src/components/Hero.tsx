@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { profile } from "@/content/profile";
 import { ScrambleText } from "./Effects";
+import { Icon } from "./Icon";
 
 /* Personal greeting: share links like yoursite.com/?for=Accenture */
 function useGreeting() {
@@ -120,7 +121,7 @@ export function Hero() {
     { label: "Facebook", icon: "fi-brands-facebook", href: facebook },
     { label: "WhatsApp", icon: "fi-brands-whatsapp", href: whatsapp },
     { label: "Telegram", icon: "fi-brands-telegram", href: telegram },
-    { label: "Viber", icon: "fi-rr-comment-alt-dots", href: viber },
+    { label: "Viber", icon: "viber", href: viber },
   ].filter((s) => s.href);
 
   return (
@@ -241,7 +242,7 @@ export function Hero() {
                 href={b.href}
                 className="inline-flex h-10 items-center gap-2 rounded-full border border-edge px-4 text-sm text-fg/90 transition hover:border-neon hover:text-neon"
               >
-                <i className={`fi ${b.icon} flex text-neon`} aria-hidden="true" />
+                <Icon name={b.icon} className="text-neon" />
                 {b.label}
               </a>
             ))}
@@ -258,7 +259,7 @@ export function Hero() {
                 title={s.label}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-edge text-muted transition hover:-translate-y-0.5 hover:border-neon hover:text-neon hover:shadow-[0_0_14px_var(--neon)]"
               >
-                <i className={`fi ${s.icon} flex text-base`} aria-hidden="true" />
+                <Icon name={s.icon} className="text-base" />
               </a>
             ))}
             </div>
