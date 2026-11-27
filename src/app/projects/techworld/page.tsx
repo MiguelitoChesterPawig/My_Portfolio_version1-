@@ -10,6 +10,7 @@ import { CaseGallery } from "@/components/CaseGallery";
 import { BackToTop } from "@/components/BackToTop";
 import { FacebookEmbed } from "@/components/FacebookEmbed";
 import { AutoVideo } from "@/components/AutoVideo";
+import { StartAtTop } from "@/components/StartAtTop";
 import { CaseNav } from "@/components/CaseNav";
 import { BuilderFlow } from "@/components/BuilderFlow";
 import { ScreenTabs } from "@/components/ScreenTabs";
@@ -94,6 +95,7 @@ export default function TechWorldCaseStudy() {
   return (
     <>
       {/* top bar */}
+      <StartAtTop />
       <header className="sticky top-0 z-40 border-b border-edge bg-bg/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-5">
           <div className="flex min-w-0 items-center gap-3">

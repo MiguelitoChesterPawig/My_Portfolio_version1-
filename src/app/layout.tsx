@@ -62,7 +62,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="antialiased" suppressHydrationWarning>
+    // data-scroll-behavior: page changes jump straight to the top instead of gliding there
+    // (the CSS smooth scroll would otherwise animate from the old page's position and stop midway)
+    <html lang="en" className="antialiased" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: scrollTopScript }} />
