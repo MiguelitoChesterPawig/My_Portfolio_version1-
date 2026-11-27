@@ -23,6 +23,9 @@ const personal = {
   languages: "",
 };
 
+// The live website. Shown on the CV so people who only get the PDF can find it.
+const SITE = "https://miguelitochesterpawig-portfolio.vercel.app";
+
 const objective = `4th year BS Information Technology student and full scholar, looking for an internship, OJT or
 junior job in IT. I have used PHP and MySQL in school projects and I plan systems with flowcharts, DFDs and ERDs.
 I am not limited to back-end work. I am open to front-end, mobile, IT support or other roles, and I love exploring
@@ -34,6 +37,7 @@ const projects = [
     period: "Jan 2026 - Present",
     role: "Lead Developer, System Analyst, Back-end Developer",
     tech: "PHP, MySQL, JavaScript, Google Gemini API",
+    // link: `${SITE}/projects/techworld`, // adds a "Full case study" line, but it pushes the CV onto a 2nd page
     points: [
       "An online computer store whose AI Builder makes full, compatible PC builds from in-stock parts.",
       "Led the server-side logic for the customer, manager and owner portals.",
@@ -127,6 +131,7 @@ const contact = [
   ["LinkedIn", profile.links.linkedin && profile.name, profile.links.linkedin],
   ["Email", profile.links.email, `mailto:${profile.links.email}`],
   ["GitHub", profile.links.github && url(profile.links.github), profile.links.github],
+  ["Portfolio", url(SITE), SITE],
   ["Phone", profile.links.phone, profile.links.phone && `tel:+63${profile.links.phone.replace(/\D/g, "").replace(/^0/, "")}`],
 ].filter(([, v]) => real(v));
 
@@ -163,7 +168,9 @@ const projectHtml = projects
       left: esc(p.name),
       right: esc(p.period),
       sub: `<em>${esc(p.role)}</em> &nbsp;|&nbsp; ${esc(p.tech)}`,
-      extra: bullets(p.points),
+      extra:
+        bullets(p.points) +
+        (p.link ? `<div class="case">Full case study: <a href="${esc(p.link)}">${esc(url(p.link))}</a></div>` : ""),
     }),
   )
   .join("");
@@ -215,6 +222,8 @@ const html = `<!doctype html>
   .row { display: flex; justify-content: space-between; gap: 6mm; }
   .date { white-space: nowrap; }
   .sub { margin-top: 0.2mm; }
+  .case { margin: 0.4mm 0 0 4.5mm; font-size: 9.5pt; }
+  .case a { text-decoration: underline; text-underline-offset: 1.5pt; }
   ul { margin: 0.6mm 0 0; padding-left: 5.5mm; }
   li { margin: 0; }
   table { border-collapse: collapse; }
