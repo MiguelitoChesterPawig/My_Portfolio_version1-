@@ -3,6 +3,20 @@
 A flowchart-themed portfolio built with **Next.js**, **Tailwind CSS** and **Motion**.
 Each section is a node on a flowchart: Start → About → Skills → Projects → Experience → Ask AI → End.
 
+![Portfolio home page](public/images/projects/Portfolio%28Home%29.jpg)
+
+## Highlights
+
+- **AI assistant that only talks about me.** It answers recruiter questions from `src/content/profile.ts`, refuses off-topic or prompt-injection requests, and tries several Gemini models in a row (with Claude as an option). If no AI is available it still answers from the profile offline.
+- **Contact form built to resist spam.** Honeypot field, Cloudflare Turnstile captcha, per-field character allow-lists, link validation and HTML escaping. Messages are emailed (Resend) and optionally saved to Supabase.
+- **Rate-limited API.** The chat allows 20 questions per visitor per hour, shared across all servers through Upstash Redis, with an in-memory fallback.
+- **Fast on phones.** Every picture goes through Next's image optimizer, so a phone downloads a small WebP sized for its screen instead of the original file. Proof videos only download when they are shown.
+- **One content file.** All text, projects, skills and certificates live in `profile.ts`; the components only display it.
+- **Every feature is optional.** With no keys set, the site still works; the AI, email, captcha and database switch on only when their keys exist.
+- **Checked on every push.** GitHub Actions runs lint, a type check and a full production build.
+
+**Built with:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Motion · Vercel
+
 ---
 
 ## 1. Run it on your computer
@@ -30,7 +44,7 @@ Then open **http://localhost:3000** in your browser. Changes you save show up ri
 
 | What | Where to put it | Then update in profile.ts |
 |---|---|---|
-| Your photo | `public/images/profile.jpg` | `photo: "/images/profile.jpg"` |
+| Your photo | `public/images/profile.webp` | `photo: "/images/profile.webp"` |
 | Project screenshots | `public/images/projects/` | `images: [...]` |
 | TechWorld flowchart / ERD / DFD | `public/images/projects/` | `diagrams: [...]` |
 | Certificates | `public/images/certificates/` | `image: "..."` |
@@ -54,6 +68,12 @@ Copy `.env.example` → rename the copy to **`.env.local`** → paste your keys.
 3. Paste it into `ANTHROPIC_API_KEY`.
 
 The AI only answers from what's in `profile.ts`, so keep that file accurate.
+
+### Shared chat rate limit (recommended on Vercel)
+1. Vercel → **Storage → Upstash → Redis** (free) → connect it to this project. The keys are added for you.
+2. Or create one at upstash.com and paste the REST URL and token into `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+
+Without it the limit still works, but it resets whenever Vercel starts a new server.
 
 ### Contact form emails
 1. resend.com → **API Keys** → create a key → paste into `RESEND_API_KEY`.
@@ -116,6 +136,9 @@ src/
   app/api/chat/route.ts   ← AI chat back-end
   app/api/contact/route.ts← contact form back-end
   components/             ← each section of the page
+  lib/optimized.ts        ← resized images for plain <img> tags
+scripts/cv/               ← builds the PDF CV (uses scripts/cv/profile.png)
+.github/workflows/ci.yml  ← lint + type check + build on every push
 public/
   images/                 ← photos, screenshots, certificates
   curriculum-vitae.pdf

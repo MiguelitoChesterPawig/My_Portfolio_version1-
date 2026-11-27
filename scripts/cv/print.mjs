@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 export default async function run(page) {
   await page.waitForFunction(() => document.fonts.status === "loaded");
-  const photo = "data:image/png;base64," + readFileSync(new URL("../../public/images/profile.png", import.meta.url)).toString("base64");
+  const photo = "data:image/png;base64," + readFileSync(new URL("./profile.png", import.meta.url)).toString("base64");
   await page.evaluate(async (photo) => {
     const img = document.querySelector(".photo");
     img.src = photo;

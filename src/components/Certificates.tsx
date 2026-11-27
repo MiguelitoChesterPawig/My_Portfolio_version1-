@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { certificates } from "@/content/profile";
+import { optimized } from "@/lib/optimized";
 
 // The viewer code only downloads when someone first hovers or clicks a certificate.
 const Lightbox = dynamic(() => import("./Lightbox").then((m) => m.Lightbox), { ssr: false });
@@ -33,7 +34,7 @@ export function Certificates() {
             <span className="relative block overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={c.image}
+                {...optimized(c.image, "(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw")}
                 alt={c.title}
                 loading="lazy"
                 decoding="async"

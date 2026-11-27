@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { captionOf } from "@/lib/caption";
 import { useSwipe } from "@/lib/useSwipe";
+import { optimized } from "@/lib/optimized";
 
 export { captionOf };
 
@@ -115,7 +116,7 @@ export function Lightbox({
               <AnimatePresence mode="wait">
                 <motion.img
                   key={src}
-                  src={src}
+                  {...optimized(src, "(min-width: 1152px) 1152px, 100vw")}
                   alt={`${title}: ${caption}`}
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -172,7 +173,7 @@ export function Lightbox({
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={s}
+                    {...optimized(s, "96px")}
                     alt=""
                     loading="lazy"
                     decoding="async"

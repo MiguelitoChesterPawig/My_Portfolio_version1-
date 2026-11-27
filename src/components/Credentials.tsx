@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { experience, education } from "@/content/profile";
 import { useSwipe } from "@/lib/useSwipe";
+import { optimized } from "@/lib/optimized";
 
 type Job = (typeof experience)[number];
 type School = (typeof education)[number];
@@ -124,7 +125,7 @@ function Collage({ title, srcs, onZoom }: { title: string; srcs: string[]; onZoo
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={src}
+            {...optimized(src, "(min-width: 768px) 400px, 60vw")}
             alt={`${title}: photo ${k + 1}`}
             loading="lazy"
             draggable={false}
@@ -200,7 +201,7 @@ function ProofSlides({ title, proof }: { title: string; proof: string[] }) {
                   playsInline
                   loop
                   controls
-                  preload="metadata"
+                  preload="none" // nothing downloads until this slide is shown and play() starts it
                   className="h-full w-full object-contain"
                 />
               )}
@@ -247,7 +248,7 @@ function ProofSlides({ title, proof }: { title: string; proof: string[] }) {
             >
               {/* absolute + object-contain: the whole photo always fits inside the box, never cropped */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={zoom} alt={`${title}: enlarged photo`} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain p-2" />
+              <img {...optimized(zoom, "100vw")} alt={`${title}: enlarged photo`} draggable={false} className="absolute inset-0 h-full w-full select-none object-contain p-2" />
               <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-white/25 bg-black/60 text-white">✕</span>
             </motion.button>
           )}
@@ -359,7 +360,7 @@ function SchoolModal({ school, onClose }: { school: School | null; onClose: () =
               </div>
               <div className="relative min-h-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={school.preview} alt={`${school.school} website`} loading="lazy" className="aspect-[16/10] max-h-[calc(92svh-17rem)] w-full object-cover object-top" />
+                <img {...optimized(school.preview, "(min-width: 768px) 700px, 100vw")} alt={`${school.school} website`} loading="lazy" className="aspect-[16/10] max-h-[calc(92svh-17rem)] w-full object-cover object-top" />
                 <span className="absolute inset-0 grid place-items-center bg-black/0 transition group-hover:bg-black/45">
                   <span className="translate-y-2 rounded-full bg-neon px-4 py-2 text-sm font-semibold text-bg opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">
                     Visit website ↗

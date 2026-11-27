@@ -17,19 +17,50 @@ const CLAUDE_MODEL = process.env.AI_MODEL || "claude-haiku-5-5";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-// Simple limit: max 20 questions per visitor per hour
+/* Limit: max 20 questions per visitor per hour.
+   On Vercel every request can land on a different, freshly started server, so a counter kept in
+   memory resets all the time. If an Upstash Redis database is connected (free tier; Vercel →
+   Storage → Upstash adds the env vars for you), the count is shared by every server instead.
+   Without it, or if Redis is unreachable, the in-memory counter below is used. */
+const LIMIT = 20;
+const WINDOW_S = 3600;
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+
+async function limited(ip: string) {
+  if (REDIS_URL && REDIS_TOKEN) {
+    try {
+      const key = `chat-limit:${ip}`;
+      // one round trip: add 1, and start the 1-hour timer only if it isn't running yet
+      const res = await fetch(`${REDIS_URL}/pipeline`, {
+        method: "POST",
+        signal: AbortSignal.timeout(2000),
+        headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+        body: JSON.stringify([["INCR", key], ["EXPIRE", key, WINDOW_S, "NX"]]),
+      });
+      if (!res.ok) throw new Error(`Redis ${res.status}`);
+      const [incr] = (await res.json()) as { result?: number; error?: string }[];
+      if (typeof incr?.result !== "number") throw new Error(incr?.error ?? "Redis returned no count");
+      return incr.result > LIMIT;
+    } catch (e) {
+      console.warn("Rate limit store unavailable, using memory instead:", e);
+    }
+  }
+  return limitedInMemory(ip);
+}
+
 const hits = new Map<string, { count: number; reset: number }>();
-function limited(ip: string) {
+function limitedInMemory(ip: string) {
   const now = Date.now();
   // forget visitors whose hour is over, so this list does not grow forever
   if (hits.size > 500) for (const [k, v] of hits) if (v.reset < now) hits.delete(k);
   const h = hits.get(ip);
   if (!h || h.reset < now) {
-    hits.set(ip, { count: 1, reset: now + 3600_000 });
+    hits.set(ip, { count: 1, reset: now + WINDOW_S * 1000 });
     return false;
   }
   h.count++;
-  return h.count > 20;
+  return h.count > LIMIT;
 }
 
 function systemPrompt() {
@@ -127,8 +158,8 @@ async function askClaude(key: string, messages: Msg[]) {
 }
 
 export async function POST(req: Request) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
-  if (limited(ip)) {
+  const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
+  if (await limited(ip)) {
     return Response.json({ reply: "You've asked a lot of questions! Please use the contact form to reach out directly." });
   }
 

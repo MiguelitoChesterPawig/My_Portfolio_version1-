@@ -3,8 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { profile } from "@/content/profile";
+import { optimized } from "@/lib/optimized";
 import { ScrambleText } from "./Effects";
 import { Icon } from "./Icon";
+
+// Both hero photos share one "sizes", so the browser picks the same file and downloads it once.
+const HERO_SIZES = "(min-width: 768px) 340px, 100vw";
 
 /* Personal greeting: share links like yoursite.com/?for=Accenture */
 function useGreeting() {
@@ -140,7 +144,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[80svh] md:hidden"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={profile.photo} alt="" fetchPriority="high" className="h-full w-full object-cover object-[center_15%]" />
+        <img {...optimized(profile.photo, HERO_SIZES)} alt="" fetchPriority="high" className="h-full w-full object-cover object-[center_15%]" />
         {/* fade into the page: soft at the top, solid at the bottom so the text stays readable */}
         <div className="absolute inset-0 bg-gradient-to-b from-bg/40 via-transparent to-bg" />
         <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-bg via-bg/85 to-transparent" />
@@ -278,7 +282,7 @@ export function Hero() {
             <Corners />
             <div className="relative overflow-hidden rounded-xl border border-edge">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={profile.photo} alt={profile.name} fetchPriority="high" className="aspect-[4/5] w-full object-cover object-top" />
+              <img {...optimized(profile.photo, HERO_SIZES)} alt={profile.name} fetchPriority="high" className="aspect-[4/5] w-full object-cover object-top" />
               <div className="scan" />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-bg/90 to-transparent px-4 pb-3 pt-10 font-mono text-[11px]">
                 <span className="text-fg/80">{profile.location}</span>

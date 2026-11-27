@@ -32,13 +32,13 @@ const projects = [
   {
     name: "TechWorld (ETPCP-AI)",
     period: "Jan 2026 - Present",
-    role: "Lead Programmer, Systems Analyst, Back-end Developer",
-    tech: "PHP, MySQL, JavaScript, HTML/CSS",
+    role: "Lead Developer, System Analyst, Back-end Developer",
+    tech: "PHP, MySQL, JavaScript, Google Gemini API",
     points: [
-      "An online store for computer parts with AI product suggestions and QR code order pickup.",
-      "Planned the system flow, business rules and DFDs before we started coding.",
-      "Added OTP email checking when users sign up.",
-      "Nominated for Best Capstone (Oct 2026). Tested by 37 people, including 5 IT experts.",
+      "An online computer store whose AI Builder makes full, compatible PC builds from in-stock parts.",
+      "Led the server-side logic for the customer, manager and owner portals.",
+      "Mapped the first system flowchart and process flow with a teammate before coding.",
+      "All 64 tests passed. Rated 4.49/5 by 37 people, incl. 5 IT experts. Best Capstone nominee.",
     ],
   },
   {
@@ -106,7 +106,7 @@ const training = [
 
 // References (from the old CV). Leave phone empty to show "Available upon request".
 const references = [
-  { name: "Mr. Domingo Tanael", role: "IT Head, Global Reciprocal Colleges", phone: "" },
+  { name: "Mr. Mark Angeles", role: "Owner, Poor Boiz Ph", phone: "099226457078" },
   { name: "Ms. Jean Ysobel Turno", role: "Manager, PotPot Clowns", phone: "+63 926 879 8199" },
 ];
 

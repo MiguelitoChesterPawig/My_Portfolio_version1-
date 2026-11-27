@@ -122,30 +122,38 @@ export const projects = [
     name: "TechWorld (ETPCP-AI)",
     subtitle:
       "E-commerce (B2C) Technology Product Configuration Platform with AI-Based Recommendation System for TechWorld Computer Store",
-    role: "Lead Programmer · Systems Analyst · Back-end Developer",
+    role: "Lead Developer · System Analyst · Back-end Developer",
     period: "Jan 2026 - Present",
+    // Facts below come from the team's approved capstone documentation (Nov 2026).
     problem:
-      "TechWorld Computer Store sold hardware in person only. Customers had no easy way to browse products, check compatibility or get recommendations online.",
+      "TechWorld Computer Store tracked stock in spreadsheets, wrote sales on paper receipts and answered product questions one by one on Facebook Messenger. Stock often didn't match, replies were slow, and the advice changed depending on which staff member answered.",
     solution:
-      "A full e-commerce platform where customers configure and buy tech products, get AI-based recommendations, and pick up orders with a QR code. Staff and owners manage stock, orders and deliveries from their own dashboards.",
+      "One online platform for the whole store: customers get complete, compatible PC builds from what is actually in stock, then order, pay and track their order. Managers, delivery staff and the owner each have their own portal, and stock updates itself with every order.",
     features: [
-      "AI-based product recommendations (machine learning)",
-      "Product configuration and compatibility",
-      "OTP email verification on sign-up",
-      "QR code order pickup and verification",
-      "4 user roles: Customer, Admin (Manager), Super Admin (Owner), Delivery Personnel",
-      "Per-unit serial / IMEI tracking for returns",
+      "AI Builder: full PC builds from in-stock parts (Google Gemini)",
+      "Every build checked for CPU socket, RAM type, power supply and budget",
+      "Rule-based backup engine when the AI is unavailable",
+      "OTP email verification and multi-factor authentication (MFA)",
+      "QR code order processing and 60-minute pickup codes",
+      "Delivery tracking with proof-of-delivery photos",
+      "Per-unit serial / IMEI tracking for warranties and returns",
+      "Demand forecasting and a full audit trail",
+      "4 portals: Customer, Admin (Manager), Delivery Personnel, Super Admin (Owner)",
     ],
-    tech: ["PHP", "MySQL", "JavaScript", "HTML/CSS", "XAMPP"],
+    tech: ["PHP", "MySQL", "JavaScript", "HTML/CSS", "Google Gemini API", "Xendit", "OpenStreetMap", "XAMPP"],
     results: [
+      "All 64 of 64 unit and integration tests passed",
+      "100% user acceptance (350 of 350 checklist answers)",
+      "Rated 4.49 / 5 (ISO/IEC 25010) by 37 respondents: 30 customers, 2 managers, 5 IT experts",
       "Defended as a capstone in Oct 2026, candidate for Best Capstone",
-      "Evaluated by 37 respondents: 30 customers, 2 managers, 5 IT experts",
     ],
-    // Real bugs you solved — recruiters love these
+    // Real problems you solved — recruiters love these
     challenges: [
-      "As lead developer, designed the system flow, business logic, DFDs and other diagrams for the whole platform before coding began",
-      "Planned the security layer: multi-factor authentication (MFA) and Google sign-in for safer logins",
-      "Added account auto-lock to block unauthorized access",
+      "Mapped the first system flowchart and process flow with Mr. Ravelo before any code; Mr. Pelayo then drew the final DFDs, ERD and activity diagram from them",
+      "Stopped two customers from buying the last unit at the same time: stock is held during checkout, and the hold expires on its own",
+      "Blocked double orders from double-clicks with short per-customer order locks",
+      "Kept AI costs low: repeated requests are answered from a cache, and every Gemini call is logged with its tokens and cost",
+      "Protected accounts with MFA, Google sign-in, account auto-lock and rate limits on login codes",
       "Built product identity tracking (unique serial / IMEI per unit) to verify genuine items and secure returns",
     ],
     images: [
@@ -153,8 +161,16 @@ export const projects = [
       "/images/projects/ETPCP-AI(Admin Dashboard).jpg",
       "/images/projects/ETPCP-AI(SuperAdmin Dashboard).jpg",
     ],
-    // Add your flowchart / ERD / DFD images here — they show your analyst side
-    diagrams: [],
+    // From the approved documentation. Formal diagrams drawn by M. A. Pelayo (see the case study page).
+    diagrams: [
+      "/images/projects/ETPCP-AI(Context Diagram).webp",
+      "/images/projects/ETPCP-AI(Use Case Diagram).webp",
+      "/images/projects/ETPCP-AI(DFD Level 2 - AI Builder).webp",
+      "/images/projects/ETPCP-AI(Activity Diagram - Old Manual Process).webp",
+      "/images/projects/ETPCP-AI(ERD - AI Builder).webp",
+      "/images/projects/ETPCP-AI(ERD - Race Condition Prevention).webp",
+    ],
+    caseStudy: "/projects/techworld", // full write-up page
     links: { live: "", github: "" }, // add links when ready
   },
   {
@@ -369,6 +385,9 @@ export const aiExtraNotes = [
   "He is willing to learn new tools and is currently learning OS installation.",
   "In the Student Concern Management System (hackathon, team CTRL+ALT+DEFEAT), Miguelito was the back-end developer. The only part that was not his was the front-end styling, which a teammate made.",
   "He is a full (100%) scholar of the Motortrade Life and Livelihood Assistance Foundation (MLALAF) in college.",
+  "TechWorld (ETPCP-AI) was a 5-person capstone team: Raphael Luther Ravelo (team leader, front-end), Miguelito Chester Pawig (lead developer, system analyst, back-end), Niño Angelo Go (system analyst, back-end, QA), Rhuel Cerda (database designer, back-end, QA) and Marc Adrian Pelayo (front-end, diagrams, technical writer). Miguelito and Mr. Ravelo made the first system flowchart and process flow; Mr. Pelayo drew the final formal diagrams (context diagram, DFDs, activity diagram, ERD). If asked who made the DFDs or ERD, say this honestly.",
+  "TechWorld's AI Builder uses Google Gemini, not a self-trained machine learning model. It picks parts from what is in stock and checks CPU socket, RAM type, power supply wattage and budget, with a rule-based engine as backup. The system also has MFA and per-unit serial / IMEI tracking.",
+  "TechWorld results: 64 of 64 unit and integration tests passed, 100% user acceptance (350 of 350), and an ISO/IEC 25010 overall rating of 4.49 out of 5 from 37 respondents. Usability scored lowest (4.40), so a first-time tutorial and a better mobile layout are the next improvements. A full case study is on the site at /projects/techworld.",
   "[Add anything else you want the AI to know, e.g. availability, preferred work setup]",
 ];
 

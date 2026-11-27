@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { projects } from "@/content/profile";
 import { captionOf } from "@/lib/caption";
 import { useSwipe } from "@/lib/useSwipe";
+import { optimized } from "@/lib/optimized";
 import { FlowSection } from "./FlowSection";
 
 /* The full-screen viewer is its own chunk: it's only downloaded and mounted once a visitor
@@ -59,9 +61,18 @@ function Tags({ items }: { items: string[] }) {
 }
 
 function Links({ p }: { p: Project }) {
-  if (!p.links.live && !p.links.github) return null;
+  const caseStudy = "caseStudy" in p ? p.caseStudy : "";
+  if (!p.links.live && !p.links.github && !caseStudy) return null;
   return (
-    <div className="flex gap-3 text-sm font-semibold">
+    <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
+      {caseStudy && (
+        <Link
+          href={caseStudy}
+          className="inline-flex items-center gap-2 rounded-lg bg-coral px-4 py-2 text-white transition hover:bg-coral-deep glow-coral"
+        >
+          Read the full case study <span aria-hidden="true">→</span>
+        </Link>
+      )}
       {p.links.live && (
         <a href={p.links.live} target="_blank" rel="noreferrer" className="text-coral hover:underline">
           Live site ↗
@@ -134,7 +145,7 @@ function Featured({ p }: { p: Project }) {
               <AnimatePresence mode="wait" custom={dir} initial={false}>
                 <motion.img
                   key={p.images[img]}
-                  src={p.images[img]}
+                  {...optimized(p.images[img], "(min-width: 1024px) 600px, 100vw")}
                   alt={`${p.name}: ${label ?? `screenshot ${img + 1}`}`}
                   custom={dir}
                   variants={slide}
@@ -252,9 +263,16 @@ function Featured({ p }: { p: Project }) {
               {tab === "Diagrams" && (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {p.diagrams.map((d) => (
-                    <a key={d} href={d} target="_blank" rel="noreferrer">
+                    <a key={d} href={d} target="_blank" rel="noreferrer" className="group block">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={d} alt="System diagram" loading="lazy" decoding="async" className="w-full rounded-lg border border-edge" />
+                      <img
+                        {...optimized(d, "(min-width: 640px) 300px, 100vw")}
+                        alt={captionOf(d) ?? "System diagram"}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[4/3] w-full rounded-lg border border-edge bg-white object-contain p-1 transition group-hover:border-neon"
+                      />
+                      <span className="mt-1.5 block font-mono text-[11px] text-muted group-hover:text-neon">{captionOf(d)}</span>
                     </a>
                   ))}
                 </div>
@@ -291,7 +309,7 @@ function CardGallery({ p }: { p: Project }) {
 
   if (n <= 1) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={`${p.name} screenshot`} loading="lazy" decoding="async" className="aspect-video w-full object-cover" />;
+    return <img {...optimized(src, "(min-width: 768px) 600px, 100vw")} alt={`${p.name} screenshot`} loading="lazy" decoding="async" className="aspect-video w-full object-cover" />;
   }
 
   const arrow =
@@ -322,7 +340,7 @@ function CardGallery({ p }: { p: Project }) {
           <AnimatePresence mode="wait" custom={dir} initial={false}>
             <motion.img
               key={src}
-              src={src}
+              {...optimized(src, "(min-width: 768px) 600px, 100vw")}
               alt={`${p.name}: ${label ?? `screenshot ${i + 1}`}`}
               custom={dir}
               variants={slide}
