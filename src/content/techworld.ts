@@ -15,6 +15,8 @@ export const techworld = {
   summary:
     "A web platform that replaced a computer store's spreadsheets, paper receipts and Messenger inquiries. Its AI Builder gives customers a complete, compatible PC build from what is actually in stock, in one step.",
   cover: img("ETPCP-AI(Customer Landing Page).jpg"),
+  // full walkthrough of the running system, shown right under the hero
+  video: "/ETPCP-AI_System_Video_Full_v7.mp4",
 
   meta: [
     { label: "My role", value: "Lead Developer, System Analyst, Back-end Developer" },
@@ -30,27 +32,26 @@ export const techworld = {
     { value: "37", label: "people evaluated it, incl. 5 IT experts" },
   ],
 
+  // Before → after. Each "fix" is a feature described further down the page.
   problem: {
-    intro:
-      "We interviewed the store's officer-in-charge and staff. Everything ran on manual tools, and it showed in five ways:",
+    intro: "We interviewed the store's officer-in-charge and staff. Everything ran on manual tools.",
     points: [
-      { title: "Stock didn't match", text: "Inventory lived in Excel or Google Sheets, so the sheet and the shelf often disagreed." },
-      { title: "Paper receipts", text: "Sales were written on carbon-duplicate receipts that could be lost, and reports were made by hand." },
-      { title: "One chat at a time", text: "Product questions came through Facebook Messenger and walk-ins, so customers who asked at the same time had to wait." },
-      { title: "Advice depended on who answered", text: "Staff checked specs and prices by hand, and two staff members could suggest two different builds." },
-      { title: "No data to decide with", text: "No central record of orders or returns, no record of who changed what, and no way to know what to reorder." },
+      { icon: "fi-rr-box-open", title: "Stock didn't match", text: "Inventory lived in Excel or Google Sheets, so the sheet and the shelf often disagreed.", fix: "Live inventory with automatic stock deduction" },
+      { icon: "fi-rr-receipt", title: "Paper receipts", text: "Sales were written on carbon-duplicate receipts, and reports were made by hand.", fix: "Every order recorded and moved along by QR scan" },
+      { icon: "fi-rr-comment-alt", title: "One chat at a time", text: "Questions came through Messenger and walk-ins, so customers had to wait their turn.", fix: "The AI Builder answers every customer at once" },
+      { icon: "fi-rr-shuffle", title: "Advice depended on who answered", text: "Two staff members could suggest two different builds for the same customer.", fix: "The same compatibility check on every build" },
+      { icon: "fi-rr-chart-histogram", title: "No data to decide with", text: "No central record of orders or returns, of who changed what, or of what to reorder.", fix: "Audit trail, serial tracking and demand forecasting" },
     ],
   },
 
   role: {
     intro:
-      "I was the Lead Developer and one of the System Analysts. Most of my work was the part users never see: the server-side logic that every portal depends on.",
+      "Lead Developer and one of the System Analysts. Most of my work was the part users never see: the server-side logic every portal depends on.",
     points: [
-      "Led the server-side architecture and processing flow, including the Customer, Admin (Manager) and Super Admin (Owner) portals.",
-      "Mapped the first system flowchart and process flow with Mr. Ravelo, before any formal diagrams or code. Mr. Pelayo then turned them into the final DFDs, ERD and activity diagram.",
-      "Reviewed every proposed feature, including my own, to check that it was needed and feasible before we built it.",
-      "Kept the team's shared task list and worked closely with the System Analyst and Database Designer during construction.",
-      "Rotated on back-end work with Mr. Go and Mr. Cerda, so every server-side component was checked by at least two people.",
+      { icon: "fi-rr-database", title: "Back-end architecture", text: "Server-side logic and processing flow for the Customer, Admin (Manager) and Super Admin (Owner) portals." },
+      { icon: "fi-rr-diagram-project", title: "First system flow", text: "Mapped the first flowchart and process flow with Mr. Ravelo, before any formal diagram or code. Mr. Pelayo turned them into the final DFDs, ERD and activity diagram." },
+      { icon: "fi-rr-list-check", title: "Feature review", text: "Checked every proposed feature, including my own, for need and feasibility before we built it." },
+      { icon: "fi-rr-users-alt", title: "Team coordination", text: "Kept the shared task list, and rotated back-end work with Mr. Go and Mr. Cerda so every server-side part was checked by at least two people." },
     ],
   },
 
